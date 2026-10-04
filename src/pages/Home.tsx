@@ -1,5 +1,5 @@
 /**
- * Главная: первый экран с 3D-букетом и лепестками, бесконечная
+ * Главная: первый экран с видео букета и лепестками, бесконечная
  * галерея, поводы, промо конструктора, как мы работаем, отзывы, доставка.
  */
 import { useEffect, useState } from 'react'
@@ -14,8 +14,7 @@ import { FAQ, REVIEWS, STEPS } from '../data/content'
 import type { Composition } from '../lib/bouquet'
 import { ASSEMBLY_HOURS } from '../lib/delivery'
 import petals from '../modules/petals'
-import bouquet3d from '../modules/bouquet3d/index'
-import { BouquetArt } from '../components/BouquetArt'
+import { StemCollage } from '../components/Collage'
 import { Gallery } from '../components/Gallery'
 
 /** Сцены промо конструктора: букет «собирается» на глазах. */
@@ -65,6 +64,43 @@ const ACCORDION = { multiple: false }
 const SPLIT = { type: 'lines' }
 const PETALS = { count: 26 }
 
+/**
+ * Видео настоящего букета (Pexels). Без звука и с playsInline — иначе
+ * браузеры не запускают автовоспроизведение (iOS открыл бы видео на весь экран).
+ * «Меньше движения» — только постер; preload="metadata" — не качать 4 МБ
+ * раньше времени, постер виден сразу.
+ */
+function HeroVideo() {
+  const reduced = useReducedMotion()
+  return (
+    <figure className="hero-video">
+      {reduced ? (
+        <img
+          src="/video/hero-poster.jpg"
+          alt="Букет из пионов, ранункулюсов и эустомы в крафтовой бумаге"
+          width="720"
+          height="1280"
+        />
+      ) : (
+        <video
+          src="/video/hero.mp4"
+          poster="/video/hero-poster.jpg"
+          autoPlay
+          muted
+          loop
+          playsInline
+          preload="metadata"
+          aria-label="Букет из пионов, ранункулюсов и эустомы в крафтовой бумаге"
+        />
+      )}
+      <figcaption className="hero-video__badge">
+        <strong>Собираем сегодня</strong>
+        <span>фото букета — до отправки</span>
+      </figcaption>
+    </figure>
+  )
+}
+
 function DemoBouquet() {
   const reduced = useReducedMotion()
   const [step, setStep] = useState(DEMO.length - 1)
@@ -73,13 +109,12 @@ function DemoBouquet() {
     const timer = window.setInterval(() => setStep((s) => (s + 1) % DEMO.length), 1800)
     return () => window.clearInterval(timer)
   }, [reduced])
-  return <BouquetArt composition={DEMO[step]} label="Букет собирается в конструкторе" />
+  return <StemCollage composition={DEMO[step]} />
 }
 
 export function Home() {
   const main = useModule<HTMLElement>(reveal)
   const petalsRef = useModule<HTMLCanvasElement>(petals, PETALS)
-  const model = useModule<HTMLDivElement>(bouquet3d)
   const title = useModule<HTMLHeadingElement>(splitText, SPLIT)
   const faq = useModule<HTMLDivElement>(accordion, ACCORDION)
   const reviews = useModule<HTMLDivElement>(swiper)
@@ -95,8 +130,8 @@ export function Home() {
               Букеты, которые собирают для&nbsp;вас — и&nbsp;вместе с&nbsp;вами
             </h1>
             <p className="lead hero__lead" data-reveal>
-              Выберите готовый букет или соберите свой в конструкторе: цена и вид меняются вживую. Фото букета пришлём
-              до отправки.
+              Выберите готовый букет или соберите свой в конструкторе: цена считается сразу. Фото букета пришлём до
+              отправки.
             </p>
             <div className="cluster" data-reveal>
               <Link className="btn btn--lg" to="/catalog">
@@ -113,18 +148,7 @@ export function Home() {
             </ul>
           </div>
           <div className="hero__art">
-            {/* 3D-модель (blender/bouquet.py). Постер — пока грузится и без WebGL. */}
-            <div
-              className="bouquet3d"
-              ref={model}
-              role="img"
-              aria-label="3D-модель букета из розовых пионов — можно повернуть"
-            >
-              <img className="bouquet3d__poster" src="/models/bouquet-poster.webp" alt="" width="600" height="733" />
-              <p className="bouquet3d__hint" aria-hidden="true">
-                ⟲ потяните, чтобы повернуть
-              </p>
-            </div>
+            <HeroVideo />
           </div>
         </div>
       </section>

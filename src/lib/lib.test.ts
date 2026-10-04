@@ -17,7 +17,8 @@ import {
   toParams,
   type Composition,
 } from './bouquet'
-import { ART_HEIGHT, ART_WIDTH, bouquetSvg, layoutBouquet, renderBouquet } from './art/bouquet-art'
+import { existsSync } from 'node:fs'
+import { FLOWERS, flowerPhoto } from '../data/flowers'
 import {
   checkSlot,
   deliveryPrice,
@@ -92,32 +93,14 @@ describe('состав и цена', () => {
   })
 })
 
-describe('рисунок букета', () => {
-  it('один состав — одна и та же картинка; цветов столько же, сколько в составе', () => {
-    expect(bouquetSvg(base)).toBe(bouquetSvg(base))
-    expect(renderBouquet(base).items).toHaveLength(stemsCount(base))
+describe('фото', () => {
+  it('у каждого оттенка каждого цветка есть фото (иначе в конструкторе пустой кружок)', () => {
+    const missing = FLOWERS.flatMap((f) => f.colors.map((c) => flowerPhoto(f.id, c))).filter((path) => !existsSync(`public${path}`))
+    expect(missing).toEqual([])
   })
 
-  it('все готовые букеты, даже в размере L, помещаются в картинку', () => {
-    for (const b of BOUQUETS) {
-      for (const item of layoutBouquet(resize(b.composition, 'L')).items) {
-        expect(item.x).toBeGreaterThan(0)
-        expect(item.x).toBeLessThan(ART_WIDTH)
-        expect(item.y).toBeGreaterThan(0)
-        expect(item.y).toBeLessThan(ART_HEIGHT)
-      }
-    }
-  })
-
-  it('добавили цветок — у остальных не меняется форма (только место)', () => {
-    const before = renderBouquet(base).items.find((i) => i.key === 'peony.blush.0')!
-    const after = renderBouquet(addStem(base, 'rose', 'cream', 3)).items.find((i) => i.key === 'peony.blush.0')!
-    expect(after.svg).toBe(before.svg)
-  })
-
-  it('зелень рисуется раньше (сзади) головок', () => {
-    const layers = renderBouquet(base).items.map((i) => i.layer)
-    expect(layers).toEqual([...layers].sort((a, b) => a - b))
+  it('у каждого готового букета есть фото', () => {
+    expect(BOUQUETS.filter((b) => !existsSync(`public${b.photo}`)).map((b) => b.id)).toEqual([])
   })
 })
 

@@ -4,9 +4,9 @@
 Запуск (из корня проекта):
     blender -b --python blender/bouquet.py
 Результат:
-    public/models/bouquet.glb   — модель для сайта (three.js, GLTFLoader)
+    blender/bouquet.glb         — модель (glTF) для three.js
     blender/bouquet.blend       — сцена: откройте в Blender, покрутите, поменяйте
-    blender/preview.png         — картинка-превью (она же постер, пока грузится 3D)
+    blender/preview.png         — картинка-превью
 
 Как устроено (сверху вниз — от мелкого к крупному):
   1. petal()      — один лепесток: сетка вершин, изогнутая «ложкой», с волной по краю
@@ -31,7 +31,7 @@ import bpy
 from mathutils import Matrix, Vector
 
 ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
-OUT_GLB = os.path.join(ROOT, 'public', 'models', 'bouquet.glb')
+OUT_GLB = os.path.join(ROOT, 'blender', 'bouquet.glb')
 OUT_BLEND = os.path.join(ROOT, 'blender', 'bouquet.blend')
 OUT_PNG = os.path.join(ROOT, 'blender', 'preview.png')
 

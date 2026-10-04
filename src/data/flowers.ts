@@ -1,15 +1,17 @@
 /**
  * Справочник: цветы, оттенки, упаковка, ленты. Отсюда берут данные
- * конструктор, каталог, расчёт цены и рисовалка букетов (lib/art).
+ * конструктор, каталог и расчёт цены.
  *
- * Новый цветок: добавьте запись в FLOWERS и функцию рисования в
- * lib/art/flowers.ts (ключ — тот же id). Цены — за штуку, в рублях.
+ * Новый цветок или оттенок: запись здесь + фото
+ * public/photos/flowers/<id>-<оттенок>.jpg (квадрат 300×300).
+ * Тест в lib.test.ts проверяет, что фото есть для каждого оттенка.
+ * Цены — за штуку, в рублях.
  */
 
 export type ColorId =
   'white' | 'cream' | 'blush' | 'pink' | 'peony' | 'coral' | 'peach' | 'red' | 'burgundy' | 'yellow' | 'lilac' | 'sage'
 
-/** Оттенок: основной цвет лепестков, тень (глубина) и цвет середины. */
+/** Оттенок: название и цвета для образцов (кружков выбора) в интерфейсе. */
 export interface Palette {
   name: string
   petal: string
@@ -50,13 +52,11 @@ export interface Flower {
   price: number
   role: Role
   colors: ColorId[]
-  /** Размер головки относительно розы (1). */
-  size: number
   note: string
 }
 
-/** Фото одного цветка (иконка в конструкторе): public/photos/flowers/<id>.jpg, Pexels. */
-export const flowerPhoto = (id: FlowerId) => `/photos/flowers/${id}.jpg`
+/** Фото цветка в нужном оттенке: public/photos/flowers/<id>-<оттенок>.jpg (Pexels). */
+export const flowerPhoto = (id: FlowerId, color: ColorId) => `/photos/flowers/${id}-${color}.jpg`
 
 export const FLOWERS: Flower[] = [
   {
@@ -66,7 +66,6 @@ export const FLOWERS: Flower[] = [
     price: 590,
     role: 'focal',
     colors: ['blush', 'pink', 'peony', 'white', 'coral'],
-    size: 1.35,
     note: 'Пышный, раскрывается за 2–3 дня',
   },
   {
@@ -76,7 +75,6 @@ export const FLOWERS: Flower[] = [
     price: 290,
     role: 'focal',
     colors: ['red', 'blush', 'cream', 'white', 'peach', 'burgundy', 'pink'],
-    size: 1,
     note: 'Кенийская, 50 см, стоит до 10 дней',
   },
   {
@@ -86,7 +84,6 @@ export const FLOWERS: Flower[] = [
     price: 260,
     role: 'accent',
     colors: ['peach', 'coral', 'white', 'yellow', 'burgundy', 'pink'],
-    size: 0.85,
     note: 'Плотный, как маленькая роза',
   },
   {
@@ -96,7 +93,6 @@ export const FLOWERS: Flower[] = [
     price: 160,
     role: 'accent',
     colors: ['pink', 'red', 'yellow', 'white', 'lilac', 'peach'],
-    size: 0.8,
     note: 'Голландский, сезон — с февраля по май',
   },
   {
@@ -106,7 +102,6 @@ export const FLOWERS: Flower[] = [
     price: 240,
     role: 'accent',
     colors: ['white', 'lilac', 'blush', 'cream'],
-    size: 0.8,
     note: 'Нежная, несколько бутонов на ветке',
   },
   {
@@ -116,7 +111,6 @@ export const FLOWERS: Flower[] = [
     price: 120,
     role: 'filler',
     colors: ['white', 'yellow'],
-    size: 0.7,
     note: 'Полевая, для лёгких букетов',
   },
   {
@@ -126,7 +120,6 @@ export const FLOWERS: Flower[] = [
     price: 180,
     role: 'filler',
     colors: ['white', 'blush'],
-    size: 1,
     note: 'Облако мелких цветков',
   },
   {
@@ -136,7 +129,6 @@ export const FLOWERS: Flower[] = [
     price: 150,
     role: 'green',
     colors: ['sage'],
-    size: 1,
     note: 'Серебристая зелень, приятно пахнет',
   },
 ]

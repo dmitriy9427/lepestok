@@ -8,7 +8,7 @@ import { bouquetById } from '../data/bouquets'
 import { formatPrice, fromCode, priceOf, stemLabel, type Composition } from '../lib/bouquet'
 import { addItem, cart, favorites, toggleFavorite } from '../lib/cart'
 import { BouquetCard } from '../components/BouquetCard'
-import { BouquetImage } from '../components/BouquetArt'
+import { StemCollage } from '../components/Collage'
 
 const EMPTY: Composition = { stems: [], wrap: 'kraft', ribbon: 'satin-blush' }
 
@@ -43,8 +43,8 @@ export function Favorites() {
               {custom.map(({ key, code, composition }) => (
                 <article className="bouquet-card" key={key}>
                   <Link className="bouquet-card__link" to={`/builder?${code}`} aria-label="Открыть в конструкторе" />
-                  <div className="bouquet-card__art">
-                    <BouquetImage composition={composition} />
+                  <div className="bouquet-card__collage">
+                    <StemCollage composition={composition} compact />
                   </div>
                   <button
                     className="fav-button bouquet-card__fav"

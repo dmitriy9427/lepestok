@@ -212,8 +212,8 @@
   position: sticky;
   top: calc(var(--header-height) + #{space(3)});
   z-index: 2;
-  padding: space(4);
-  background: radial-gradient(65% 55% at 50% 45%, var(--color-blush), transparent 75%), var(--color-surface);
+  padding: space(5);
+  background: radial-gradient(80% 60% at 50% 30%, var(--color-blush), transparent 75%), var(--color-surface);
   border-radius: radius('lg');
 
   // До xl букет — первым (над списком цветов), на xl — в средней колонке.
@@ -239,33 +239,41 @@
   }
 }
 
-.builder__art {
-  width: 100%; // без этого SVG с margin: auto сжимается до 300 px
-  position: relative;
-  max-width: rem(520px);
-  margin-inline: auto;
-
-  @include down('md') {
-    max-width: none;
-    height: 34svh;
-
-    .bouquet-art {
-      height: 100%;
-    }
-  }
-}
-
 .builder__hint {
-  position: absolute;
-  inset: 20% 8% auto;
   display: grid;
   gap: space(3);
-  justify-items: center;
-  padding: space(4);
-  text-align: center;
-  background: rgb(255 253 249 / 85%);
-  border-radius: radius('md');
-  backdrop-filter: blur(6px);
+  justify-items: start;
+  color: var(--color-muted);
+}
+
+// Телефон: коллаж — лента под шапкой, листается вбок, без подписей.
+.builder__stage .collage {
+  @include down('md') {
+    .collage__stems {
+      @include scrollbar-hidden;
+
+      display: flex;
+      gap: space(3);
+      padding-top: 6px;
+      overflow-x: auto;
+    }
+
+    .collage__stem {
+      flex: none;
+      width: rem(68px);
+    }
+
+    .collage__count {
+      min-width: rem(24px);
+      height: rem(24px);
+      font-size: rem(11px);
+    }
+
+    .collage__name,
+    .collage__wrap {
+      display: none;
+    }
+  }
 }
 
 .builder__count {

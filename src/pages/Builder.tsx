@@ -2,7 +2,8 @@
  * Конструктор букета.
  *
  * Состав — одно состояние (Composition), всё остальное из него считается:
- * рисунок (BouquetArt), цена с расшифровкой, подсказка по бюджету.
+ * коллаж «ваш букет» из фото, цена с расшифровкой, подсказка по бюджету.
+ * Фото цветка меняется вместе с выбранным оттенком.
  * Состав пишется в адрес (replace — история не засоряется каждым кликом):
  * перезагрузка ничего не теряет, ссылкой можно поделиться, страница букета
  * ведёт сюда кнопкой «Собрать похожий».
@@ -30,7 +31,7 @@ import {
   type Composition,
 } from '../lib/bouquet'
 import { addItem, cart, favorites, toggleFavorite } from '../lib/cart'
-import { BouquetArt } from '../components/BouquetArt'
+import { StemCollage } from '../components/Collage'
 import { QtyStepper } from '../components/QtyStepper'
 
 const EMPTY: Composition = { stems: [], wrap: 'kraft', ribbon: 'satin-blush' }
@@ -104,21 +105,21 @@ export function Builder() {
           </section>
 
           <div className="builder__stage">
-            <div className="builder__art">
-              <BouquetArt composition={composition} label="Ваш букет" />
-              {empty && (
-                <div className="builder__hint">
-                  <p>Добавьте первый цветок — или начните с готового:</p>
-                  <div className="cluster">
-                    {PRESETS.map((b) => (
-                      <button key={b.id} className="chip" type="button" onClick={() => setComposition(b.composition)}>
-                        {b.title}
-                      </button>
-                    ))}
-                  </div>
+            <h2 className="builder__heading">Ваш букет</h2>
+            {empty ? (
+              <div className="builder__hint">
+                <p>Добавьте цветы из списка — или начните с готового:</p>
+                <div className="cluster">
+                  {PRESETS.map((b) => (
+                    <button key={b.id} className="chip" type="button" onClick={() => setComposition(b.composition)}>
+                      {b.title}
+                    </button>
+                  ))}
                 </div>
-              )}
-            </div>
+              </div>
+            ) : (
+              <StemCollage composition={composition} />
+            )}
             <p className="builder__count" aria-live="polite">
               Цветов в букете: {count} из {MAX_STEMS}
             </p>
@@ -164,7 +165,7 @@ export function Builder() {
             </div>
 
             <div className="summary">
-              <h2 className="builder__heading">Ваш букет</h2>
+              <h2 className="builder__heading">Состав и цена</h2>
               {empty ? (
                 <p className="muted">Пока пусто.</p>
               ) : (
@@ -282,14 +283,26 @@ function FlowerRow({
   composition: Composition
   onChange: (f: FlowerId, c: ColorId, delta: number) => void
 }) {
-  const [color, setColor] = useState<ColorId>(flower.colors[0])
+  // Начальный оттенок — тот, что уже есть в букете (пришли по ссылке или из
+  // «Собрать похожий»), иначе первый из справочника.
+  const [color, setColor] = useState<ColorId>(
+    () => composition.stems.find((s) => s.flower === flower.id)?.color ?? flower.colors[0],
+  )
   const count = composition.stems.find((s) => s.flower === flower.id && s.color === color)?.count ?? 0
   const total = composition.stems.filter((s) => s.flower === flower.id).reduce((sum, s) => sum + s.count, 0)
 
   return (
     <li className="flower-row">
-      {/* Фото — чтобы было понятно, что это за цветок; оттенок — образцы ниже. */}
-      <img className="flower-row__photo" src={flowerPhoto(flower.id)} alt="" width="300" height="300" loading="lazy" />
+      {/* Фото в выбранном оттенке: сменили образец — сменилось фото. */}
+      <img
+        className="flower-row__photo"
+        key={color}
+        src={flowerPhoto(flower.id, color)}
+        alt={`${flower.name}, ${COLORS[color].name.toLowerCase()}`}
+        width="300"
+        height="300"
+        loading="lazy"
+      />
       <div className="flower-row__info">
         <p className="flower-row__name">
           {flower.name} {total > 0 && <span className="flower-row__total">× {total}</span>}

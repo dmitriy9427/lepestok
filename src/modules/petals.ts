@@ -11,7 +11,7 @@
 import { gsap } from 'kit/js/core/gsap.js'
 import { createDisposer, onViewport } from 'kit/js/core/lifecycle.js'
 import { readOptions } from 'kit/js/core/options.js'
-import { createRandom, between } from '../lib/art/random'
+import { createRandom, between } from '../lib/random'
 
 const DEFAULTS = {
   count: 26,

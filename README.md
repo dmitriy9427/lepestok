@@ -7,13 +7,12 @@
 
 ## Что есть
 
-- **3D-букет на первом экране** — модель собрана в Blender скриптом на Python
-  (`blender/bouquet.py`), на сайте — three.js: медленно вращается, можно повернуть
-  мышью/пальцем. Пока грузится и без WebGL — постер (рендер той же модели).
-- **Конструктор букета** (`/builder`) — выбираете цветы, оттенки, упаковку и ленту;
-  букет рисуется вживую (SVG, каждый цветок — процедурный рисунок), цветы «распускаются»
-  и плавно переезжают. Цена с расшифровкой, бюджет («уложиться в 5 000 ₽» — подскажет,
-  что убрать), состав в адресе — ссылкой можно поделиться.
+- **Видео настоящего букета на первом экране** — вертикальный ролик в арке
+  (Pexels), без звука и в цикле; «меньше движения» — только постер.
+- **Конструктор букета** (`/builder`) — цветы, оттенки, упаковка и лента. У каждого
+  оттенка каждого цветка — своё фото (33 шт.). «Ваш букет» — коллаж из этих фото
+  с количеством. Цена с расшифровкой, бюджет («уложиться в 5 000 ₽» — подскажет, что
+  убрать), состав в адресе — ссылкой можно поделиться.
 - **Каталог** (`/catalog`) — фото букетов, фильтры (повод, цена, цветы, оттенок),
   сортировка, всё в адресе («Назад» работает). Перестановка карточек — GSAP Flip.
   Загрузка/ошибка/пусто — как с настоящим API (`/catalog?fail` — проверить ошибку).
@@ -34,10 +33,10 @@ npm run check      # линтеры + типы + тесты + сборка
 npm run build      # готовый сайт в dist/ (SPA: хостинг должен отдавать index.html на любой путь)
 ```
 
-3D-модель пересобрать (нужен Blender 4.2+):
+Учебная 3D-модель букета (на сайте не используется — первый экран сделан видео):
 
 ```bash
-blender -b --python blender/bouquet.py
+blender -b --python blender/bouquet.py   # → blender/bouquet.glb, см. blender/README.md
 ```
 
 ## Что где менять
@@ -49,10 +48,8 @@ blender -b --python blender/bouquet.py
 | Тексты главной: шаги, отзывы, вопросы        | `src/data/content.ts`                                      |
 | Доставка: интервалы, время сборки, цены      | `src/lib/delivery.ts`                                      |
 | Подписка: размеры, частота, скидки           | `src/lib/subscription.ts`                                  |
-| Как рисуется цветок                          | `src/lib/art/flowers.ts` (функция на каждый вид)           |
-| Раскладка букета, упаковка, бант             | `src/lib/art/bouquet-art.ts`                               |
-| 3D-модель                                    | `blender/bouquet.py` → `public/models/bouquet.glb`         |
-| Свет и камера 3D на сайте                    | `src/modules/bouquet3d/scene.ts`                           |
+| Фото цветов по оттенкам                      | `public/photos/flowers/<цветок>-<оттенок>.jpg` (300×300)   |
+| Видео первого экрана и постер                | `public/video/hero.mp4`, `hero-poster.jpg`                 |
 | Цвета, шрифты                                | `src/styles/_abstracts.scss` (+ импорт шрифтов `main.tsx`) |
 | Отправка заказа (сейчас имитация)            | `src/lib/api.ts` — замените тела функций на `fetch`        |
 | Проверка полей заказа                        | `src/forms/schemas.ts`                                     |
@@ -63,8 +60,7 @@ blender -b --python blender/bouquet.py
 src/
   data/        справочники и контент
   lib/         чистая логика (цена, фильтры, доставка, корзина, рисунок) — покрыта тестами
-  lib/art/     процедурные цветы и раскладка букета (SVG)
-  modules/     свои модули по контракту кита: bouquet3d (three.js), petals (canvas)
+  modules/     свой модуль по контракту кита: petals (лепестки на canvas)
   components/  шапка, подвал, карточка, галерея, рисунок букета…
   pages/       страницы (лениво, кроме главной)
   hooks/       useAsync — загрузка с отменой и «повторить»
@@ -80,10 +76,10 @@ kit/           общий кит (модули, SCSS, React-адаптер, dev-
 | ------------------------------------------------------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------- |
 | Рядом с красивым селектом виден обычный `<select>`            | Старая копия кита: в StrictMode отменённый экземпляр модуля снимал класс у живого. Исправлено в `kit/react/useModule.js` (экземпляры по очереди) — обновите кит. |
 | Модуль кита в условном блоке (`{x && <div ref>}`) не работает | `useModule` запускает модуль при монтировании компонента. Вынесите блок в отдельный компонент (так сделаны `PriceRange`, `Greeting`).                            |
-| SVG-рисунок букета маленький (300 px)                         | У inline SVG без width внутри grid с `margin: auto` — ширина по умолчанию. Задайте контейнеру `width: 100%`.                                                     |
+| Нет фото у нового оттенка цветка                              | Тест «у каждого оттенка есть фото» упадёт и назовёт файл. Положите `public/photos/flowers/<цветок>-<оттенок>.jpg`.                                               |
 | Заголовки «не тем» шрифтом                                    | Нет кириллицы в шрифте (Fraunces так и выбыл). Проверяйте `node_modules/@fontsource-variable/<шрифт>/files/*cyrillic*`.                                          |
-| В 3D-галерее чёрный фон у картинок                            | Прозрачные картинки в WebGL-текстуре — чёрные. Фото непрозрачные; для SVG есть `bouquetDataUrl(c, { background: true })`.                                        |
-| 3D не появился, только постер                                 | Нет WebGL или модель не загрузилась (в консоли `[bouquet3d]`). Постер остаётся — так и задумано.                                                                 |
+| В 3D-галерее чёрные картинки                                  | Прозрачные PNG/SVG в WebGL-текстуре — чёрные. Используйте непрозрачные фото (jpg).                                                                               |
+| Видео не играет на iPhone                                     | Нужны `muted` + `playsInline` + `autoPlay`, иначе iOS не запускает его сам. При «меньше движения» показывается только постер — так задумано.                     |
 | Фото не грузятся в 3D-галерее с CDN                           | Картинки с другого домена для WebGL — только с CORS. Держите их в `public/` или на CDN с `Access-Control-Allow-Origin`.                                          |
 | Страница по прямой ссылке /catalog даёт 404 на хостинге       | SPA: настройте отдачу `index.html` на любой путь — `docs/deploy.md`.                                                                                             |
 | Основной бандл ~575 КБ                                        | React + GSAP + Swiper. three.js (~560 КБ) — отдельный ленивый файл, только для 3D. Уменьшить: убрать Swiper из отзывов (заменить на `slider` кита).              |
@@ -96,4 +92,11 @@ kit/           общий кит (модули, SCSS, React-адаптер, dev-
 Julia Çarı, Shameel Mukkath, Faustin Nkurunziza, Katrenur, Brent Keane, Vladimir Srajber,
 Ssümçiğ, Anastasiya Badun, Ellie Burgin, Michael Obstoj, Tuan Vy, Marta Dzedyshko,
 Audrey Bory, Amelia Cui, Brendan Rühli, Alex Ohan, Jobayer Ahmed, Vera Emilie,
-cottonbro studio, Calaful Prints. Ссылки — поле `credit` в `src/data/bouquets.ts`.
+cottonbro studio, Calaful Prints, Kaboompics, Siegfried Poepperl, Zoryana Lavruk,
+Iuliia Pilipeichenko, Natalia Sevruk, Bloatware Rejuvenation, Hilal, Nguyễn Vũ, Galina K.,
+Şeydanur Yıldız, Olena Bohovyk, Gintare Baradinske, hatice genç, Joanna Niechciał,
+Temidayo Aladesuyi, Sephina Cornwall, Vlad Ioan, Gije Cho, Cup of Honey Lemon, Sônia Motta,
+Pawel Konrad, Olya Prutskova, Shawn Nguyen, Cz Jen. Ссылки на букеты — поле `credit` в
+`src/data/bouquets.ts`.
+
+Видео первого экрана — Nadezhda Moryak / [Pexels](https://www.pexels.com/video/6184404/).

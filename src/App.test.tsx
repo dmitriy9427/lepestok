@@ -28,10 +28,10 @@ async function renderAt(path: string) {
 }
 
 describe('App', () => {
-  it('главная: заголовок, меню, 3D-блок с постером', async () => {
+  it('главная: заголовок, меню, видео букета с постером', async () => {
     await renderAt('/')
     expect(screen.getByRole('heading', { level: 1 }).textContent).toContain('Букеты')
-    expect(document.querySelector('.bouquet3d__poster')).toBeTruthy()
+    expect(document.querySelector('.hero-video video')?.getAttribute('poster')).toBe('/video/hero-poster.jpg')
     expect(document.querySelector('.burger')?.getAttribute('aria-controls')).toBe('site-menu')
   })
 

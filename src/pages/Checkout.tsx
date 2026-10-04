@@ -21,7 +21,7 @@ import { cart, cartCount, cartTotal } from '../lib/cart'
 import { createOrder, ApiError } from '../lib/api'
 import { deliveryPrice, firstAvailableDate, lastAvailableDate, slotsFor, type Method } from '../lib/delivery'
 import { PAYMENTS, orderSchema } from '../forms/schemas'
-import { ItemImage } from '../components/BouquetArt'
+import { ItemImage } from '../components/Collage'
 
 const STEPS = ['Контакты', 'Доставка', 'Оплата']
 

@@ -3,62 +3,133 @@
 // ═══════════════════════════════════════════════════════════════════════════
 @use 'abstracts' as *;
 
-// ─── Живой рисунок ─────────────────────────────────────────────────────────
-.bouquet-art {
-  display: block;
-  width: 100%;
-  height: auto;
-  overflow: visible;
+// ─── Коллаж «ваш букет» (StemCollage) ──────────────────────────────────────
+// Круглые фото цветов с количеством. Новая плитка «прилетает», счётчик
+// «подпрыгивает» при изменении (key={count} пересоздаёт его).
+.collage__stems {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(rem(104px), 1fr));
+  gap: space(4) space(3);
+  padding: 0;
+  margin: 0;
+  list-style: none;
 }
 
-// Цветок переезжает на новое место плавно: место — в CSS transform (style),
-// поэтому работает transition. Атрибут transform анимировать нельзя.
-.art-item {
-  transition: transform 0.7s var(--ease);
+.collage__stem {
+  position: relative;
+  display: grid;
+  gap: space(2);
+  justify-items: center;
+  text-align: center;
+  animation: stem-in 0.5s var(--ease) backwards;
+
+  img {
+    width: 100%;
+    max-width: rem(120px);
+    aspect-ratio: 1;
+    object-fit: cover;
+    border-radius: 50%;
+    box-shadow:
+      0 0 0 3px var(--color-paper),
+      0 10px 24px rgb(120 60 70 / 18%);
+  }
 }
 
-// Новый цветок «распускается» (CSS-анимация срабатывает при вставке в DOM).
-// fill-box — масштаб от центра самого цветка, а не от угла картинки.
-.art-item__bloom {
-  transform-box: fill-box;
-  transform-origin: center;
-  animation: bloom 0.7s var(--ease) backwards;
+.collage__count {
+  position: absolute;
+  top: 0;
+  right: 8%;
+  display: grid;
+  place-items: center;
+  min-width: rem(32px);
+  height: rem(32px);
+  padding-inline: 6px;
+  font-size: rem(14px);
+  font-weight: 800;
+  color: #fff;
+  background: var(--color-accent);
+  border-radius: radius('pill');
+  box-shadow: 0 0 0 3px var(--color-paper);
+  animation: count-pop 0.35s var(--ease);
 }
 
-// Первый показ — по очереди, волной (--i — номер цветка).
-.bouquet-art--bloom .art-item__bloom {
-  animation-duration: 0.9s;
-  animation-delay: calc(var(--i) * 35ms);
+.collage__name {
+  font-size: rem(13px);
+  line-height: 1.3;
+  color: var(--color-muted);
 }
 
-@keyframes bloom {
+.collage__wrap {
+  display: flex;
+  flex-wrap: wrap;
+  gap: space(2);
+  align-items: center;
+  padding-top: space(4);
+  margin-top: space(5);
+  font-size: rem(14px);
+  color: var(--color-muted);
+  border-top: 1px dashed var(--color-border);
+}
+
+.collage__swatch {
+  width: rem(18px);
+  height: rem(18px);
+  border-radius: 5px;
+  box-shadow: inset 0 0 0 1px rgb(0 0 0 / 12%);
+
+  &--ribbon {
+    width: rem(28px);
+    height: rem(8px);
+    margin-left: space(3);
+    border-radius: 4px;
+  }
+}
+
+// Компактный — превью в корзине и избранном: фото внахлёст.
+.collage--compact {
+  .collage__stems {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0;
+    justify-content: center;
+    padding: space(2);
+  }
+
+  .collage__stem {
+    width: 46%;
+    margin: -4% -2%;
+    animation: none;
+  }
+
+  .collage__count {
+    min-width: rem(22px);
+    height: rem(22px);
+    font-size: rem(11px);
+    box-shadow: 0 0 0 2px var(--color-paper);
+  }
+}
+
+@keyframes stem-in {
   from {
     opacity: 0;
-    transform: scale(0.2) rotate(-40deg);
+    transform: scale(0.6) translateY(12px);
   }
 }
 
 @media (prefers-reduced-motion: reduce) {
-  .art-item {
-    transition: none;
-  }
-
-  .art-item__bloom {
+  .collage__stem,
+  .collage__count {
     animation: none;
   }
 }
 
-.bouquet-image {
+.item-photo {
   display: block;
   width: 100%;
   height: auto;
-
-  // Фото готового букета в превью — тот же формат, что у рисунка (5:6).
-  &--photo {
-    aspect-ratio: 5 / 6;
-    object-fit: cover;
-    border-radius: inherit;
-  }
+  aspect-ratio: 5 / 6;
+  object-fit: cover;
+  border-radius: inherit;
 }
 
 // ─── Карточка букета ───────────────────────────────────────────────────────
@@ -126,9 +197,11 @@
   }
 }
 
-// Рисунок вместо фото — у букетов, собранных в конструкторе (избранное).
-.bouquet-card__art {
-  padding: space(4) space(6) 0;
+// Коллаж вместо фото — у букетов, собранных в конструкторе (избранное).
+.bouquet-card__collage {
+  display: grid;
+  place-items: center;
+  aspect-ratio: 4 / 5;
   background: radial-gradient(70% 60% at 50% 45%, var(--color-blush), transparent 75%), var(--color-surface);
 }
 

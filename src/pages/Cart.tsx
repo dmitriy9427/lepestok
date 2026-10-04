@@ -8,7 +8,7 @@ import { CARD_PRICE } from '../data/flowers'
 import { SIZE_LABEL, formatPrice, stemLabel, toParams } from '../lib/bouquet'
 import { cart, cartCount, cartTotal, lineTotal, removeItem, setQty, type CartItem } from '../lib/cart'
 import { FREE_DELIVERY_FROM } from '../lib/delivery'
-import { ItemImage } from '../components/BouquetArt'
+import { ItemImage } from '../components/Collage'
 import { QtyStepper } from '../components/QtyStepper'
 
 export function Cart() {
