@@ -1,0 +1,37 @@
+// ═══════════════════════════════════════════════════════════════════════════
+// Настройки проекта поверх кита. Подключайте в КАЖДОМ scss-файле:
+//   @use 'abstracts' as *;
+// CSS этот файл не выводит.
+//
+// «Лицо» магазина: кремовая «бумага», пыльная роза, шалфей, акцент — пион.
+// Каждый ключ $colors становится CSS-переменной --color-<ключ>.
+// Шрифты подключены в src/main.tsx (@fontsource-variable/*): меняете шрифт —
+// поменяйте и импорт там, и имя здесь.
+// ═══════════════════════════════════════════════════════════════════════════
+@forward 'kit/scss/abstracts' with (
+  $colors: (
+    'bg': #fbf6ef,
+    'surface': #f3e9df,
+    'text': #2b2321,
+    'muted': #7a6d68,
+    'border': #e8dcd0,
+    'accent': #c24c6f,
+    'accent-contrast': #fff,
+    'focus': #c24c6f,
+    'blush': #f4d9d4,
+    'sage': #8fa58a,
+    'forest': #2f3d33,
+    'paper': #fffdf9,
+  ),
+  $font-base: (
+    'Manrope Variable',
+    system-ui,
+    sans-serif,
+  ),
+  $font-heading: (
+    'Cormorant Variable',
+    georgia,
+    serif,
+  ),
+  $container-max: 1320px
+);

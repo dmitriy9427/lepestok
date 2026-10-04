@@ -1,0 +1,477 @@
+// ═══════════════════════════════════════════════════════════════════════════
+// Каталог (фильтры, сетка), страница букета, конструктор.
+// ═══════════════════════════════════════════════════════════════════════════
+@use 'abstracts' as *;
+
+// ─── Каталог ───────────────────────────────────────────────────────────────
+.filters {
+  display: grid;
+  gap: space(6);
+  padding: fluid(18px, 28px);
+  margin-bottom: space(8);
+  background: var(--color-paper);
+  border: 1px solid var(--color-border);
+  border-radius: radius('lg');
+}
+
+// Поводы — одной строкой с прокруткой на узком экране (не в три ряда).
+.filters__row {
+  @include scrollbar-hidden;
+
+  display: flex;
+  gap: space(2);
+  padding-bottom: 2px;
+  margin-inline: calc(-1 * #{fluid(18px, 28px)});
+  padding-inline: fluid(18px, 28px);
+  overflow-x: auto;
+}
+
+.filters__grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(min(240px, 100%), 1fr));
+  gap: space(6);
+}
+
+.filters__group {
+  display: grid;
+  gap: space(3);
+  align-content: start;
+  min-width: 0;
+}
+
+.filters__bar {
+  display: flex;
+  flex-wrap: wrap;
+  gap: space(3);
+  align-items: center;
+  padding-top: space(5);
+  border-top: 1px solid var(--color-border);
+}
+
+.filters__count {
+  margin-right: auto;
+  font-weight: 700;
+}
+
+.filters__sort {
+  width: rem(250px);
+}
+
+.catalog__grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(min(260px, 100%), 1fr));
+  gap: space(5);
+}
+
+// ─── Страница букета ───────────────────────────────────────────────────────
+.product__grid {
+  display: grid;
+  gap: space(10);
+  align-items: start;
+
+  @include up('lg') {
+    grid-template-columns: 1fr 1fr;
+  }
+}
+
+.product__photo {
+  position: relative;
+  margin: 0;
+
+  @include up('lg') {
+    position: sticky;
+    top: calc(var(--header-height) + #{space(4)});
+  }
+
+  img {
+    display: block;
+    width: 100%;
+    height: auto;
+    aspect-ratio: 4 / 5;
+    object-fit: cover;
+    border-radius: radius('lg');
+  }
+
+  figcaption {
+    margin-top: space(2);
+    font-size: rem(12px);
+    color: var(--color-muted);
+
+    a {
+      color: inherit;
+    }
+  }
+}
+
+.product__badge {
+  position: absolute;
+  top: space(4);
+  left: space(4);
+  padding: space(1) space(3);
+  font-size: rem(13px);
+  font-weight: 700;
+  color: #fff;
+  background: var(--color-forest);
+  border-radius: radius('pill');
+}
+
+.product__info {
+  display: grid;
+  gap: space(5);
+}
+
+.product__tags {
+  display: flex;
+  flex-wrap: wrap;
+  gap: space(2);
+}
+
+.product__title {
+  font-size: fluid(36px, 56px);
+  line-height: 1.05;
+}
+
+.product__price {
+  font-size: fluid(26px, 34px);
+  font-weight: 800;
+  color: var(--color-accent);
+  font-variant-numeric: tabular-nums;
+}
+
+.product__sizes {
+  padding: 0;
+  margin: 0;
+  border: 0;
+
+  legend {
+    margin-bottom: space(2);
+  }
+}
+
+.product__composition ul {
+  @include reset-list;
+
+  display: grid;
+  gap: space(1);
+  margin-top: space(2);
+
+  li::before {
+    margin-right: space(2);
+    color: var(--color-sage);
+    content: '❀';
+  }
+}
+
+.product__card {
+  padding: space(4);
+  background: var(--color-paper);
+  border: 1px dashed var(--color-border);
+  border-radius: radius('md');
+}
+
+.product__buy {
+  display: flex;
+  flex-wrap: wrap;
+  gap: space(3);
+  align-items: center;
+
+  .stepper {
+    min-height: rem(56px);
+  }
+}
+
+.product__similar-link {
+  justify-self: start;
+  font-weight: 600;
+  color: var(--color-accent);
+}
+
+// ─── Конструктор ───────────────────────────────────────────────────────────
+// Три колонки: цветы | букет (липкий) | упаковка и итог.
+// Планшет — букет сверху во всю ширину. Телефон — букет липнет под шапкой,
+// чтобы видеть его, пока листаешь список цветов.
+.builder__grid {
+  display: grid;
+  gap: space(6);
+  align-items: start;
+
+  @include up('xl') {
+    grid-template-columns: minmax(0, 1fr) minmax(0, 1.15fr) minmax(0, 0.9fr);
+  }
+
+  @include between('md', 'xl') {
+    grid-template-columns: 1fr 1fr;
+
+    .builder__stage {
+      grid-column: 1 / -1;
+    }
+  }
+}
+
+.builder__stage {
+  position: sticky;
+  top: calc(var(--header-height) + #{space(3)});
+  z-index: 2;
+  padding: space(4);
+  background: radial-gradient(65% 55% at 50% 45%, var(--color-blush), transparent 75%), var(--color-surface);
+  border-radius: radius('lg');
+
+  // До xl букет — первым (над списком цветов), на xl — в средней колонке.
+  order: -1;
+
+  @include up('xl') {
+    order: 0;
+  }
+
+  @include between('md', 'xl') {
+    position: static;
+  }
+
+  // Телефон: прижат к самому верху. Шапка при прокрутке вниз прячется —
+  // с top: var(--header-height) над букетом просвечивал бы список цветов.
+  // Вместо этого — отступ сверху под шапку (когда она видна).
+  @include down('md') {
+    top: 0;
+    padding-top: calc(var(--header-height) + #{space(2)});
+    margin-inline: calc(-1 * var(--container-padding));
+    border-radius: 0;
+    box-shadow: 0 10px 20px -16px rgb(0 0 0 / 30%);
+  }
+}
+
+.builder__art {
+  width: 100%; // без этого SVG с margin: auto сжимается до 300 px
+  position: relative;
+  max-width: rem(520px);
+  margin-inline: auto;
+
+  @include down('md') {
+    max-width: none;
+    height: 34svh;
+
+    .bouquet-art {
+      height: 100%;
+    }
+  }
+}
+
+.builder__hint {
+  position: absolute;
+  inset: 20% 8% auto;
+  display: grid;
+  gap: space(3);
+  justify-items: center;
+  padding: space(4);
+  text-align: center;
+  background: rgb(255 253 249 / 85%);
+  border-radius: radius('md');
+  backdrop-filter: blur(6px);
+}
+
+.builder__count {
+  margin-top: space(2);
+  font-size: rem(13px);
+  color: var(--color-muted);
+  text-align: center;
+  font-variant-numeric: tabular-nums;
+}
+
+.builder__heading {
+  margin-bottom: space(3);
+  font-size: rem(22px);
+}
+
+.builder__side {
+  display: grid;
+  gap: space(3);
+}
+
+.flower-list {
+  @include reset-list;
+
+  display: grid;
+  gap: space(2);
+}
+
+.flower-row {
+  display: grid;
+  grid-template-columns: rem(56px) 1fr auto;
+  gap: space(3);
+  align-items: center;
+  padding: space(3);
+  background: var(--color-paper);
+  border: 1px solid var(--color-border);
+  border-radius: radius('md');
+}
+
+.flower-row__photo {
+  width: rem(56px);
+  height: rem(56px);
+  object-fit: cover;
+  border-radius: 50%;
+  box-shadow:
+    0 0 0 2px var(--color-paper),
+    0 0 0 3px var(--color-border);
+}
+
+.flower-row__info {
+  display: grid;
+  gap: space(1);
+  min-width: 0;
+}
+
+.flower-row__name {
+  font-weight: 700;
+}
+
+.flower-row__total {
+  font-size: rem(13px);
+  color: var(--color-accent);
+}
+
+.flower-row__note {
+  font-size: rem(12px);
+  color: var(--color-muted);
+}
+
+.wraps {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: space(2);
+  margin-bottom: space(3);
+}
+
+.wrap-option {
+  position: relative;
+  display: grid;
+  grid-template-columns: auto 1fr;
+  gap: 0 space(2);
+  align-items: center;
+  padding: space(3);
+  cursor: pointer;
+  background: var(--color-paper);
+  border: 1px solid var(--color-border);
+  border-radius: radius('md');
+  transition: border-color var(--duration);
+
+  input {
+    position: absolute;
+    opacity: 0;
+  }
+
+  &:has(input:checked) {
+    border-color: var(--color-accent);
+    box-shadow: inset 0 0 0 1px var(--color-accent);
+  }
+
+  &:has(input:focus-visible) {
+    @include focus-ring;
+  }
+}
+
+.wrap-option__swatch {
+  grid-row: span 2;
+  width: rem(24px);
+  height: rem(24px);
+  border-radius: 6px;
+  box-shadow: inset 0 0 0 1px rgb(0 0 0 / 12%);
+}
+
+.wrap-option__name {
+  font-size: rem(14px);
+  font-weight: 600;
+}
+
+.wrap-option__price {
+  font-size: rem(12px);
+  color: var(--color-muted);
+}
+
+.summary {
+  display: grid;
+  gap: space(3);
+  padding: space(5);
+  margin-top: space(4);
+  background: var(--color-paper);
+  border: 1px solid var(--color-border);
+  border-radius: radius('lg');
+}
+
+.summary__stems {
+  @include reset-list;
+
+  display: grid;
+  gap: space(1);
+
+  li {
+    display: flex;
+    gap: space(2);
+    align-items: center;
+    justify-content: space-between;
+    font-size: rem(14px);
+  }
+}
+
+.summary__remove {
+  @include reset-button;
+
+  display: grid;
+  place-items: center;
+  width: rem(28px);
+  height: rem(28px);
+  color: var(--color-muted);
+  border-radius: 50%;
+
+  @include hover {
+    color: var(--color-accent);
+    background: var(--color-blush);
+  }
+}
+
+.summary__price {
+  display: grid;
+  gap: space(1);
+  padding-top: space(3);
+  margin: 0;
+  border-top: 1px solid var(--color-border);
+
+  div {
+    display: flex;
+    justify-content: space-between;
+    font-size: rem(14px);
+  }
+
+  dt {
+    color: var(--color-muted);
+  }
+
+  dd {
+    margin: 0;
+    font-variant-numeric: tabular-nums;
+  }
+}
+
+.summary__total {
+  padding-top: space(2);
+  font-size: rem(18px) !important;
+  font-weight: 800;
+
+  dt {
+    color: var(--color-text) !important;
+  }
+}
+
+.budget__hint {
+  display: grid;
+  gap: space(2);
+  justify-items: start;
+  padding: space(3);
+  font-size: rem(14px);
+  background: #fdf1e4;
+  border-radius: radius('md');
+}
+
+.summary__actions {
+  display: grid;
+  gap: space(3);
+}

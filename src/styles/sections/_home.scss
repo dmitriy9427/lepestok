@@ -1,0 +1,257 @@
+// ═══════════════════════════════════════════════════════════════════════════
+// Главная: первый экран, галерея, поводы, промо конструктора, шаги, доставка.
+// ═══════════════════════════════════════════════════════════════════════════
+@use 'abstracts' as *;
+
+// ─── Первый экран ──────────────────────────────────────────────────────────
+.hero {
+  position: relative;
+  overflow: hidden;
+  isolation: isolate;
+  background:
+    radial-gradient(45% 55% at 75% 45%, rgb(244 217 212 / 90%), transparent 70%),
+    radial-gradient(30% 40% at 10% 90%, rgb(169 187 163 / 35%), transparent 70%), var(--color-bg);
+}
+
+// Лепестки — на весь экран, под текстом, мышь не перехватывают.
+.petals {
+  position: absolute;
+  inset: 0;
+  z-index: -1;
+  width: 100%;
+  height: 100%;
+  pointer-events: none;
+}
+
+.hero__grid {
+  display: grid;
+  gap: space(6);
+  align-items: center;
+  min-height: calc(100svh - var(--header-height));
+  padding-block: space(8) space(12);
+
+  @include up('lg') {
+    grid-template-columns: 1.05fr 1fr;
+  }
+}
+
+.hero__text {
+  display: grid;
+  gap: space(6);
+  justify-items: start;
+}
+
+.hero__title {
+  font-size: fluid(44px, 84px);
+  line-height: 0.98;
+}
+
+.hero__perks {
+  @include reset-list;
+
+  display: flex;
+  flex-wrap: wrap;
+  gap: space(2) space(5);
+  font-size: rem(14px);
+  color: var(--color-muted);
+
+  li::before {
+    margin-right: space(2);
+    color: var(--color-accent);
+    content: '✿';
+  }
+}
+
+// 3D-букет: постер под canvas; когда модель готова — постер гаснет.
+// touch-action: pan-y — вертикальный свайп прокручивает страницу,
+// горизонтальный — вращает букет.
+.bouquet3d {
+  position: relative;
+  aspect-ratio: 9 / 11;
+  cursor: grab;
+  touch-action: pan-y;
+
+  &:active {
+    cursor: grabbing;
+  }
+}
+
+.bouquet3d__poster,
+.bouquet3d__canvas {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+}
+
+.bouquet3d__poster {
+  object-fit: contain;
+  transition: opacity 0.8s var(--ease);
+
+  .bouquet3d.is-ready & {
+    opacity: 0;
+  }
+}
+
+.bouquet3d__canvas {
+  opacity: 0;
+  transition: opacity 0.8s var(--ease);
+
+  .bouquet3d.is-ready & {
+    opacity: 1;
+  }
+}
+
+.bouquet3d__hint {
+  position: absolute;
+  bottom: 2%;
+  left: 50%;
+  font-size: rem(13px);
+  color: var(--color-muted);
+  white-space: nowrap;
+  opacity: 0;
+  transition: opacity 0.6s 1s;
+  transform: translateX(-50%);
+
+  .bouquet3d.is-ready & {
+    opacity: 1;
+  }
+}
+
+.hero__art {
+  width: 100%; // без этого SVG с margin: auto сжимается до 300 px
+  max-width: rem(600px);
+  margin-inline: auto;
+
+  @include down('lg') {
+    order: -1;
+    max-width: rem(340px);
+  }
+}
+
+// ─── Галерея ───────────────────────────────────────────────────────────────
+.gallery-section {
+  overflow: hidden;
+}
+
+// ─── Поводы ────────────────────────────────────────────────────────────────
+.occasions {
+  @include reset-list;
+
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(min(200px, 100%), 1fr));
+  gap: space(4);
+}
+
+.occasion {
+  display: grid;
+  gap: space(1);
+  height: 100%;
+  padding: space(5);
+  color: inherit;
+  text-decoration: none;
+  background: var(--color-paper);
+  border: 1px solid var(--color-border);
+  border-radius: radius('lg');
+  transition:
+    background-color var(--duration),
+    transform var(--duration) var(--ease);
+
+  @include hover {
+    background: var(--color-blush);
+    transform: translateY(-4px);
+  }
+}
+
+.occasion__emoji {
+  margin-bottom: space(2);
+  font-size: rem(30px);
+}
+
+.occasion__title {
+  font-family: var(--font-heading);
+  font-size: rem(21px);
+}
+
+.occasion__text {
+  font-size: rem(14px);
+  color: var(--color-muted);
+}
+
+// ─── Промо конструктора ────────────────────────────────────────────────────
+.builder-promo {
+  color: #fff;
+  background: radial-gradient(40% 70% at 25% 50%, rgb(194 76 111 / 25%), transparent 70%), var(--color-forest);
+
+  .lead {
+    margin-bottom: space(8);
+    color: rgb(255 255 255 / 78%);
+  }
+}
+
+.builder-promo__grid {
+  display: grid;
+  gap: space(10);
+  align-items: center;
+
+  @include up('md') {
+    grid-template-columns: 1fr 1.1fr;
+  }
+}
+
+.builder-promo__art {
+  width: 100%; // без этого SVG с margin: auto сжимается до 300 px
+  max-width: rem(440px);
+  margin-inline: auto;
+}
+
+// ─── Как мы работаем ───────────────────────────────────────────────────────
+.steps {
+  @include reset-list;
+
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(min(240px, 100%), 1fr));
+  gap: space(6);
+  counter-reset: none;
+}
+
+.steps__item {
+  display: grid;
+  gap: space(2);
+  padding-top: space(5);
+  border-top: 1px solid var(--color-border);
+}
+
+.steps__index {
+  font-family: var(--font-heading);
+  font-size: rem(40px);
+  line-height: 1;
+  color: var(--color-accent);
+}
+
+.steps__title {
+  font-size: rem(22px);
+}
+
+// ─── Доставка и вопросы ────────────────────────────────────────────────────
+.delivery {
+  background: var(--color-surface);
+}
+
+.delivery__grid {
+  display: grid;
+  gap: space(10);
+
+  @include up('lg') {
+    grid-template-columns: 1fr 1.3fr;
+  }
+
+  .lead {
+    margin-bottom: space(6);
+  }
+}
+
+.accordion__trigger {
+  font-family: var(--font-heading);
+  font-size: rem(20px);
+}

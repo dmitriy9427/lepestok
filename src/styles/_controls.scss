@@ -1,0 +1,314 @@
+// ═══════════════════════════════════════════════════════════════════════════
+// Мелкие элементы управления: чипсы, «таблетки», образцы цвета, степпер,
+// кнопка ♥, теги, состояния «пусто / ошибка / успех», сетка форм.
+// ═══════════════════════════════════════════════════════════════════════════
+@use 'abstracts' as *;
+
+// Чипс-кнопка: <button class="chip" aria-pressed="true">.
+.chip {
+  @include reset-button;
+
+  min-height: rem(40px);
+  padding: space(2) space(4);
+  font-size: rem(14px);
+  font-weight: 600;
+  white-space: nowrap;
+  background: var(--color-paper);
+  border: 1px solid var(--color-border);
+  border-radius: radius('pill');
+  transition:
+    background-color var(--duration),
+    color var(--duration),
+    border-color var(--duration);
+
+  @include hover {
+    border-color: var(--color-accent);
+  }
+
+  &[aria-pressed='true'] {
+    color: #fff;
+    background: var(--color-accent);
+    border-color: var(--color-accent);
+  }
+}
+
+// Таблетка — радио/чекбокс, оформленный кнопкой:
+//   <label class="pill"><input type="radio"><span>Текст</span></label>
+.pills {
+  display: flex;
+  flex-wrap: wrap;
+  gap: space(2);
+}
+
+.pill {
+  position: relative;
+  display: inline-flex;
+  cursor: pointer;
+
+  input {
+    position: absolute;
+    opacity: 0;
+  }
+
+  span {
+    display: inline-flex;
+    gap: space(2);
+    align-items: center;
+    min-height: rem(44px);
+    padding: space(2) space(4);
+    font-size: rem(15px);
+    background: var(--color-paper);
+    border: 1px solid var(--color-border);
+    border-radius: radius('pill');
+    transition:
+      background-color var(--duration),
+      color var(--duration),
+      border-color var(--duration);
+  }
+
+  small {
+    font-size: rem(12px);
+    opacity: 0.75;
+  }
+
+  &:hover span {
+    border-color: var(--color-accent);
+  }
+
+  input:checked + span {
+    color: #fff;
+    background: var(--color-accent);
+    border-color: var(--color-accent);
+  }
+
+  input:focus-visible + span {
+    @include focus-ring;
+  }
+
+  input:disabled + span {
+    color: var(--color-muted);
+    text-decoration: line-through;
+    cursor: not-allowed;
+    background: var(--color-surface);
+    border-color: transparent;
+  }
+}
+
+// Образец цвета. Цвет — переменная --swatch. Выбран — aria-pressed или :checked.
+.swatches {
+  display: flex;
+  flex-wrap: wrap;
+  gap: space(2);
+
+  &--sm .swatch {
+    width: rem(24px);
+    height: rem(24px);
+  }
+}
+
+.swatch {
+  @include reset-button;
+
+  position: relative;
+  width: rem(34px);
+  height: rem(34px);
+  cursor: pointer;
+  background: var(--swatch);
+  border-radius: 50%;
+  box-shadow: inset 0 0 0 1px rgb(0 0 0 / 12%);
+  transition: transform var(--duration) var(--ease);
+
+  @include hover {
+    transform: scale(1.1);
+  }
+
+  // Кольцо выбора — снаружи, с зазором.
+  &::after {
+    position: absolute;
+    inset: -4px;
+    content: '';
+    border: 2px solid var(--color-text);
+    border-radius: 50%;
+    opacity: 0;
+    transition: opacity var(--duration);
+  }
+
+  &[aria-pressed='true']::after,
+  &:has(input:checked)::after {
+    opacity: 1;
+  }
+
+  &:has(input:focus-visible) {
+    @include focus-ring(3px);
+  }
+}
+
+// Степпер — стили кита + вариант с <output> (React-компонент QtyStepper).
+.stepper {
+  background: var(--color-paper);
+  border-radius: radius('pill');
+
+  output {
+    display: grid;
+    place-items: center;
+    min-width: 3ch;
+    font-weight: 700;
+    font-variant-numeric: tabular-nums;
+  }
+
+  button {
+    color: var(--color-accent);
+  }
+
+  &--sm button {
+    width: rem(36px);
+    min-height: rem(36px);
+    font-size: rem(18px);
+  }
+}
+
+// Кнопка ♥. Выбрано — aria-pressed="true" (сердце заливается).
+.fav-button {
+  @include reset-button;
+
+  display: inline-flex;
+  gap: space(2);
+  align-items: center;
+  justify-content: center;
+  color: var(--color-accent);
+
+  svg {
+    width: rem(22px);
+    height: rem(22px);
+    fill: transparent;
+    stroke: currentcolor;
+    stroke-width: 1.8;
+    transition:
+      fill var(--duration),
+      transform 0.35s var(--ease);
+  }
+
+  &[aria-pressed='true'] svg {
+    fill: currentcolor;
+    transform: scale(1.12);
+  }
+
+  &--round {
+    width: rem(56px);
+    height: rem(56px);
+    background: var(--color-paper);
+    border: 1px solid var(--color-border);
+    border-radius: 50%;
+  }
+}
+
+.tag {
+  display: inline-block;
+  padding: 2px space(3);
+  font-size: rem(13px);
+  color: var(--color-text);
+  text-decoration: none;
+  background: var(--color-blush);
+  border-radius: radius('pill');
+}
+
+// Состояние «пусто / ошибка / готово» — по центру, с кнопкой.
+.state {
+  display: grid;
+  gap: space(3);
+  justify-items: center;
+  padding: space(14) space(4);
+  text-align: center;
+
+  &--page {
+    min-height: 55svh;
+    align-content: center;
+  }
+}
+
+.state__title {
+  font-family: var(--font-heading);
+  font-size: fluid(26px, 38px);
+}
+
+.state__icon {
+  width: rem(72px);
+  height: rem(72px);
+  margin-bottom: space(2);
+
+  circle {
+    fill: var(--color-blush);
+  }
+
+  path {
+    fill: none;
+    stroke: var(--color-accent);
+    stroke-width: 3;
+    stroke-linecap: round;
+    stroke-linejoin: round;
+    stroke-dasharray: 40;
+    animation: draw-check 0.8s 0.2s var(--ease) backwards;
+  }
+}
+
+@keyframes draw-check {
+  from {
+    stroke-dashoffset: 40;
+  }
+}
+
+// Формы.
+.form-grid {
+  display: grid;
+  gap: space(4) space(5);
+
+  @include up('md') {
+    grid-template-columns: 1fr 1fr;
+  }
+}
+
+.form-grid__wide {
+  grid-column: 1 / -1;
+}
+
+.field__input {
+  background: var(--color-paper);
+}
+
+.checkbox {
+  display: flex;
+  flex-flow: row wrap; // ошибка (flex-basis: 100%) уходит на новую строку
+  gap: space(2);
+  align-items: flex-start;
+  font-size: rem(14px);
+  cursor: pointer;
+
+  input {
+    flex-shrink: 0;
+    width: rem(18px);
+    height: rem(18px);
+    margin-top: 2px;
+    accent-color: var(--color-accent);
+  }
+
+  .field__error {
+    flex-basis: 100%;
+  }
+}
+
+[data-form-status] {
+  &:empty {
+    display: none;
+  }
+
+  &[data-type='success'] {
+    padding: space(3) space(4);
+    color: var(--color-forest);
+    background: #e3ece0;
+    border-radius: radius('md');
+  }
+
+  &[data-type='error'] {
+    color: var(--color-danger);
+  }
+}

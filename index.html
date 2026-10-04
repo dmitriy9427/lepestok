@@ -1,0 +1,24 @@
+<!doctype html>
+<html lang="ru" data-theme="light">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Лепесток — цветочная мастерская</title>
+    <meta name="description" content="Готовые букеты и конструктор: соберите свой букет, цена и вид меняются вживую. Доставка за 2 часа." />
+    <meta property="og:type" content="website" />
+    <meta property="og:title" content="Лепесток — цветочная мастерская" />
+    <meta property="og:description" content="Готовые букеты и конструктор букета с живой картинкой." />
+    <!-- TODO: абсолютный адрес картинки на проде (https://…/og.jpg) -->
+    <meta property="og:image" content="/og.jpg" />
+    <meta name="theme-color" content="#fbf6ef" />
+    <link rel="icon" href="/favicon.svg" type="image/svg+xml" />
+    <!-- Тема у магазина одна (светлая): data-theme="light" выключает тёмную тему системы. -->
+    <script>
+      document.documentElement.classList.add('js')
+    </script>
+  </head>
+  <body>
+    <div id="root"></div>
+    <script type="module" src="/src/main.tsx"></script>
+  </body>
+</html>

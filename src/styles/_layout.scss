@@ -1,0 +1,324 @@
+// ═══════════════════════════════════════════════════════════════════════════
+// Типографика, шапка, подвал, кнопки — каркас всех страниц.
+// ═══════════════════════════════════════════════════════════════════════════
+@use 'abstracts' as *;
+
+body {
+  background: var(--color-bg);
+}
+
+:is(h1, h2, h3, .h1, .h2, .h3) {
+  // Cormorant — тонкий, с маленькими строчными: вес 600 и кегль крупнее обычного.
+  // (Fraunces не подошёл — в нём нет кириллицы, заголовки падали в Georgia.)
+  font-weight: 600;
+  line-height: 1;
+  letter-spacing: -0.01em;
+}
+
+.section--tight {
+  padding-top: 0;
+}
+
+// Первая секция внутренних страниц — ближе к шапке (без огромного отступа).
+main > .section:first-child {
+  padding-top: fluid(20px, 48px);
+}
+
+.section-head {
+  display: grid;
+  gap: space(2);
+  margin-bottom: fluid(28px, 56px);
+
+  &--row {
+    display: flex;
+    flex-wrap: wrap;
+    gap: space(4);
+    align-items: flex-end;
+    justify-content: space-between;
+  }
+}
+
+.section-title {
+  max-width: 22ch;
+  margin-bottom: space(6);
+  font-size: fluid(38px, 68px);
+  line-height: 1;
+
+  .section-head & {
+    margin-bottom: 0;
+  }
+}
+
+.eyebrow {
+  margin-bottom: space(3);
+  font-size: rem(13px);
+  font-weight: 700;
+  color: var(--color-accent);
+  text-transform: uppercase;
+  letter-spacing: 0.16em;
+
+  &--light {
+    color: var(--color-blush);
+  }
+
+  .section-head & {
+    margin-bottom: 0;
+  }
+}
+
+.lead {
+  max-width: 52ch;
+}
+
+// ─── Кнопки (дополнения к .btn кита) ─────────────────────────────────────────
+.btn--light {
+  color: var(--color-forest);
+  background: var(--color-paper);
+
+  @include hover {
+    background: var(--color-blush);
+  }
+}
+
+.btn--block {
+  width: 100%;
+}
+
+.round-btn {
+  @include reset-button;
+
+  display: grid;
+  place-items: center;
+  width: rem(52px);
+  height: rem(52px);
+  font-size: rem(18px);
+  background: var(--color-paper);
+  border: 1px solid var(--color-border);
+  border-radius: 50%;
+  transition:
+    background-color var(--duration),
+    transform var(--duration) var(--ease);
+
+  @include hover {
+    background: var(--color-blush);
+    transform: scale(1.06);
+  }
+}
+
+// ─── Шапка ─────────────────────────────────────────────────────────────────
+.logo {
+  display: inline-flex;
+  gap: space(2);
+  align-items: center;
+  color: inherit;
+  text-decoration: none;
+}
+
+.logo__mark {
+  width: rem(30px);
+  height: rem(30px);
+  fill: var(--color-accent);
+  transition: transform 0.8s var(--ease);
+
+  .logo:hover & {
+    transform: rotate(72deg);
+  }
+}
+
+.logo__center {
+  fill: #f2b632;
+}
+
+.logo__text {
+  font-family: var(--font-heading);
+  font-size: rem(28px);
+  font-weight: 600;
+}
+
+.nav {
+  @include up('lg') {
+    display: flex;
+    flex: 1;
+    justify-content: center;
+  }
+}
+
+.nav__list {
+  @include reset-list;
+
+  display: flex;
+  flex-direction: column;
+  gap: space(5);
+  font-family: var(--font-heading);
+  font-size: rem(32px);
+
+  @include up('lg') {
+    flex-direction: row;
+    gap: space(8);
+    font-family: var(--font-base);
+    font-size: rem(15px);
+    font-weight: 600;
+  }
+}
+
+.nav__link {
+  position: relative;
+  color: inherit;
+  text-decoration: none;
+
+  // Подчёркивание «вырастает» из центра.
+  &::after {
+    position: absolute;
+    right: 0;
+    bottom: -4px;
+    left: 0;
+    height: 2px;
+    content: '';
+    background: var(--color-accent);
+    border-radius: 2px;
+    transition: transform var(--duration) var(--ease);
+    transform: scaleX(0);
+  }
+
+  &.active::after,
+  &:hover::after {
+    transform: scaleX(1);
+  }
+}
+
+.header__actions {
+  display: flex;
+  gap: space(2);
+  align-items: center;
+}
+
+.icon-link {
+  position: relative;
+  display: grid;
+  place-items: center;
+  width: rem(44px);
+  height: rem(44px);
+  color: inherit;
+  border-radius: 50%;
+  transition: background-color var(--duration);
+
+  @include hover {
+    background: var(--color-surface);
+  }
+
+  svg {
+    width: rem(22px);
+    height: rem(22px);
+    fill: none;
+    stroke: currentcolor;
+    stroke-width: 1.6;
+    stroke-linejoin: round;
+  }
+}
+
+// Счётчик «подпрыгивает» при изменении (key={count} в Header пересоздаёт элемент).
+.icon-link__count {
+  position: absolute;
+  top: 2px;
+  right: 0;
+  display: grid;
+  place-items: center;
+  min-width: rem(18px);
+  height: rem(18px);
+  padding-inline: 4px;
+  font-size: rem(11px);
+  font-weight: 700;
+  color: #fff;
+  background: var(--color-accent);
+  border-radius: radius('pill');
+  animation: count-pop 0.4s var(--ease);
+
+  @media (prefers-reduced-motion: reduce) {
+    animation: none;
+  }
+}
+
+@keyframes count-pop {
+  from {
+    transform: scale(0.4);
+  }
+}
+
+// ─── Подвал ────────────────────────────────────────────────────────────────
+.footer {
+  padding-block: space(14) space(10);
+  margin-top: space(10);
+  color: rgb(255 255 255 / 85%);
+  background: var(--color-forest);
+
+  .muted {
+    color: rgb(255 255 255 / 55%);
+  }
+
+  .logo {
+    color: #fff;
+  }
+}
+
+.footer__inner {
+  display: grid;
+  gap: space(8);
+
+  @include up('md') {
+    grid-template-columns: 2fr 1fr 1fr;
+  }
+}
+
+.footer__brand {
+  display: grid;
+  gap: space(3);
+  align-content: start;
+  max-width: 36ch;
+}
+
+.footer__nav {
+  display: grid;
+  gap: space(2);
+  align-content: start;
+
+  a {
+    color: inherit;
+    text-decoration: none;
+
+    @include hover {
+      color: var(--color-blush);
+    }
+  }
+}
+
+.footer__phone {
+  font-family: var(--font-heading);
+  font-size: rem(24px);
+  color: #fff;
+  text-decoration: none;
+}
+
+.footer__note {
+  grid-column: 1 / -1;
+  padding-top: space(6);
+  font-size: rem(13px);
+  border-top: 1px solid rgb(255 255 255 / 12%);
+}
+
+.breadcrumbs {
+  margin-bottom: space(6);
+  font-size: rem(14px);
+  color: var(--color-muted);
+
+  a {
+    color: inherit;
+  }
+
+  [aria-current] {
+    color: var(--color-text);
+  }
+}
+
+.page-loading {
+  min-height: 100svh;
+}
