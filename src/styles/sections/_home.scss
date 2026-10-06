@@ -161,8 +161,10 @@ $hero-dark: #140b10;
 }
 
 .hero__title {
-  max-width: 13ch;
-  font-size: fluid(48px, 112px);
+  // Размер ограничен и шириной, и ВЫСОТОЙ экрана: на ноутбуке (~800 px)
+  // крупный заголовок в 5 строк выталкивал кнопки за нижний край.
+  max-width: 18ch;
+  font-size: clamp(#{rem(40px)}, min(7vw, 10svh), #{rem(104px)});
   line-height: 0.92;
   text-wrap: balance;
 }

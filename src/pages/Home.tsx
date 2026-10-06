@@ -120,7 +120,7 @@ export function Home() {
           <div className="container hero__content">
             <p className="eyebrow eyebrow--light">Цветочная мастерская · Москва</p>
             <h1 className="hero__title">
-              Букеты, которые собирают для&nbsp;вас — и&nbsp;вместе с&nbsp;вами
+              Букеты, которые собирают для&nbsp;вас&nbsp;— и&nbsp;вместе с&nbsp;вами
             </h1>
             <p className="lead hero__lead">
               Выберите готовый букет или соберите свой в конструкторе: цена считается сразу. Фото букета пришлём до
