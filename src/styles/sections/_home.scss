@@ -331,22 +331,58 @@ $hero-dark: #140b10;
   counter-reset: none;
 }
 
+// Шаг — карточка: крупный контурный номер (при наведении наливается
+// цветом), сверху полоска-прогресс, растущая слева направо.
 .steps__item {
+  position: relative;
   display: grid;
   gap: space(2);
-  padding-top: space(5);
-  border-top: 1px solid var(--color-border);
+  align-content: start;
+  padding: space(6) space(6) space(7);
+  overflow: hidden;
+  background: var(--color-paper);
+  border: 1px solid var(--color-border);
+  border-radius: radius('lg');
+
+  &::before {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 3px;
+    content: '';
+    background: linear-gradient(90deg, var(--color-accent), var(--color-petal));
+    transition: transform 0.7s cubic-bezier(0.2, 0.8, 0.2, 1);
+    transform: scaleX(0.18);
+    transform-origin: left;
+  }
+
+  &:hover::before {
+    transform: scaleX(1);
+  }
 }
 
 .steps__index {
+  justify-self: start;
+  margin-bottom: space(3);
   font-family: var(--font-heading);
-  font-size: rem(40px);
+  font-size: rem(80px);
+  font-weight: 700;
   line-height: 1;
-  color: var(--color-accent);
+  color: transparent;
+  -webkit-text-stroke: 1px color-mix(in srgb, var(--color-accent) 55%, transparent);
+  transition:
+    color 0.5s,
+    transform 0.7s cubic-bezier(0.2, 0.8, 0.2, 1);
+
+  .steps__item:hover & {
+    color: color-mix(in srgb, var(--color-accent) 18%, transparent);
+    transform: translateX(6px) rotate(-4deg);
+  }
 }
 
 .steps__title {
-  font-size: rem(22px);
+  font-size: rem(24px);
 }
 
 // ─── Доставка и вопросы ────────────────────────────────────────────────────

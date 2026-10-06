@@ -208,7 +208,7 @@ export function Home() {
           </div>
           <ol className="steps">
             {STEPS.map((step, i) => (
-              <li className="steps__item" key={step.title} data-reveal>
+              <li className="steps__item" key={step.title}>
                 <span className="steps__index">{String(i + 1).padStart(2, '0')}</span>
                 <h3 className="steps__title">{step.title}</h3>
                 <p className="muted">{step.text}</p>

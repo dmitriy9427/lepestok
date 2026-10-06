@@ -88,28 +88,28 @@ $ease-out: cubic-bezier(0.2, 0.8, 0.2, 1);
   }
 }
 
-// Плашки чуть приподнимаются.
+// Плашки чуть приподнимаются — плавно (своя transition; правило появления
+// снимается с элемента после показа, см. motion.ts).
 @media (hover: hover) {
-  :where(.plan-option, .wrap-option, .review, .steps__item, .cart-item) {
+  .plan-option,
+  .wrap-option,
+  .review,
+  .steps__item,
+  .cart-item {
     transition:
-      transform 0.4s $ease-out,
-      box-shadow 0.4s $ease-out,
+      transform 0.5s $ease-out,
+      box-shadow 0.5s $ease-out,
       border-color 0.3s;
 
     &:hover {
-      box-shadow: 0 14px 30px -18px rgb(120 60 70 / 35%);
-      transform: translateY(-3px);
+      box-shadow: 0 18px 36px -20px rgb(120 60 70 / 40%);
+      transform: translateY(-4px);
     }
   }
 
   // Эмодзи повода покачивается.
   .occasion:hover .occasion__emoji {
     animation: wiggle 0.7s ease-in-out;
-  }
-
-  // Номер шага наливается цветом и подпрыгивает.
-  .steps__item:hover .steps__index {
-    animation: index-pop 0.6s $ease-out;
   }
 
   // Фото цветка в конструкторе поворачивается.

@@ -57,9 +57,20 @@ export default function motion(root: HTMLElement, ctx: { reduced?: boolean } = {
           return ra.top - rb.top || ra.left - rb.left
         })
       entering.forEach((el, i) => {
-        el.style.setProperty('--anim-delay', `${Math.min(i, 8) * 0.07}s`)
+        const delay = Math.min(i, 8) * 0.07
+        el.style.setProperty('--anim-delay', `${delay}s`)
         el.classList.add('is-in')
         io.unobserve(el)
+        // Появились — снимаем разметку: правило transition появления больше
+        // не перебивает собственные переходы элемента (hover-подъём отзывов
+        // и тарифов был рывком именно из-за него).
+        window.setTimeout(
+          () => {
+            el.removeAttribute('data-anim')
+            el.style.removeProperty('--anim-delay')
+          },
+          (delay + 1.3) * 1000,
+        )
       })
     },
     { rootMargin: '0px 0px -8% 0px' },
