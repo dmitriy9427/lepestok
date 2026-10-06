@@ -88,6 +88,17 @@ blender -b --python blender/bouquet.py   # → blender/bouquet.glb, см. blende
 | Отправка заказа (сейчас имитация)            | `src/lib/api.ts` — замените тела функций на `fetch`        |
 | Проверка полей заказа                        | `src/forms/schemas.ts`                                     |
 
+## Как устроено
+
+Учебные главы с объяснениями «что, как и почему» — в [docs/](docs/README.md):
+[архитектура](docs/01-architecture.md) ·
+[видео сквозь буквы](docs/02-hero.md) ·
+[переходы и прелоадер](docs/03-transitions.md) ·
+[анимации](docs/04-motion.md) ·
+[логика магазина](docs/05-shop.md) ·
+[тема и деплой](docs/06-theme-and-deploy.md) ·
+[шпаргалка к собеседованию](docs/interview.md).
+
 ## Где что лежит
 
 ```
