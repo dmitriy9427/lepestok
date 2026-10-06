@@ -1,9 +1,35 @@
-# Лепесток — цветочная мастерская
+<div align="center">
 
-Пет-проект: магазин цветов с **конструктором букета**. React 19 + TypeScript, на шаблоне
-**frontend-kit**. Магазин вымышленный, заказы никуда не уходят.
+<a href="https://dmitriy9427.github.io/lepestok/"><img src="docs/screenshots/lepestok-home.webp" alt="Интро: видео сквозь буквы" width="100%"></a>
 
-![Первый экран](public/og.jpg)
+# 🌸 Лепесток
+
+**Цветочный магазин с конструктором букета — пет-проект на React 19 и TypeScript**
+
+### [Открыть демо →](https://dmitriy9427.github.io/lepestok/)
+
+![React 19](https://img.shields.io/badge/React_19-20232a?style=flat-square&logo=react&logoColor=61dafb) ![TypeScript](https://img.shields.io/badge/TypeScript-3178c6?style=flat-square&logo=typescript&logoColor=white) ![GSAP](https://img.shields.io/badge/GSAP-0ae448?style=flat-square&logo=greensock&logoColor=black) ![WebGL](https://img.shields.io/badge/WebGL-990000?style=flat-square&logo=webgl&logoColor=white) ![Vite](https://img.shields.io/badge/Vite-646cff?style=flat-square&logo=vite&logoColor=white) ![тесты 223](https://img.shields.io/badge/%D1%82%D0%B5%D1%81%D1%82%D1%8B_223-2ea44f?style=flat-square) [![Деплой](https://github.com/dmitriy9427/lepestok/actions/workflows/pages.yml/badge.svg)](https://github.com/dmitriy9427/lepestok/actions/workflows/pages.yml)
+
+</div>
+
+| Первый экран | Каталог: 3D-наклон и цветок | Прелоадер |
+| --- | --- | --- |
+| <img src="docs/screenshots/lepestok-hero.webp" alt="Первый экран"> | <img src="docs/screenshots/lepestok-catalog.webp" alt="Каталог: 3D-наклон и цветок"> | <img src="docs/screenshots/lepestok-preloader.webp" alt="Прелоадер"> |
+
+## Коротко
+
+| | |
+| :---: | --- |
+| 🎬 | **Видео сквозь буквы** — на первом экране слово «Лепесток» залито видео и раскрывается прокруткой |
+| 🌷 | **Шейдерные переходы** — страница сменяется под WebGL-цветком, который распускается из центра |
+| 💐 | **Конструктор букета** — цветы, оттенки, упаковка, лента; цена и бюджет считаются сразу, состав — в адресе |
+| 🗂 | **Каталог** — фильтры в адресе, перестановка карточек через GSAP Flip, 3D-наклон и цветок при наведении |
+| 🌙 | **Тёмная тема** — переключатель-цветок, системная тема на лету, без вспышки при загрузке |
+| ✅ | **Качество** — 223 теста, строгий TypeScript, ESLint/Stylelint, «меньше движения» везде |
+
+Автор — [Дмитрий Рябов](https://dmitriy9427.github.io/resume/), frontend-разработчик.
+
+---
 
 ## Что есть
 
