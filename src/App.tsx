@@ -5,11 +5,12 @@
 import { lazy, Suspense, useEffect, useState } from 'react'
 import { Route, Routes, useLocation, type Location } from 'react-router'
 import { ScrollTrigger } from 'kit/js/core/gsap.js'
-import { useKit, useModule } from 'kit/react/index.js'
+import { useKit, useModule, useReducedMotion } from 'kit/react/index.js'
 import { Header } from './components/Header'
 import { Footer } from './components/Footer'
 import { Home } from './pages/Home'
 import blossoms from './modules/blossoms'
+import motion from './modules/motion'
 import { cover, isTransitioning, reveal } from './modules/pageTransition'
 
 const page = <T extends Record<string, unknown>>(load: () => Promise<T>, name: keyof T) =>
@@ -144,6 +145,9 @@ export function App() {
   const shown = usePageTransition()
   useRouteReset(shown)
   const ambient = useModule<HTMLCanvasElement>(blossoms)
+  // Появление при прокрутке и hover-эффекты — на весь сайт (modules/motion).
+  const reduced = useReducedMotion()
+  useEffect(() => motion(document.body, { reduced })?.destroy, [reduced])
   return (
     <>
       <a className="skip-link" href="#main">

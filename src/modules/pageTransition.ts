@@ -69,11 +69,12 @@ void main() {
   vec3 fill = mix(uA, uB, mixer);
 
   // Светящаяся кромка лепестков (только пока фронт на экране).
+  // Розовая, приглушённая и узкая: свечение только намекает на край лепестка.
   float live = step(0.001, uProgress) * (1.0 - step(0.999, uProgress));
-  float rim = exp(-abs(d) * 34.0) * live;
+  float rim = exp(-abs(d) * 70.0) * live * 0.55;
 
-  float alpha = clamp(cover + rim * 0.85, 0.0, 1.0);
-  vec3 color = mix(fill, uRim, clamp(rim, 0.0, 1.0) * (1.0 - cover * 0.4));
+  float alpha = clamp(cover + rim * 0.6, 0.0, 1.0);
+  vec3 color = mix(fill, uRim, rim * (1.0 - cover * 0.5));
   gl_FragColor = vec4(color * alpha, alpha);
 }
 `
@@ -136,7 +137,7 @@ function createRenderer(canvas: HTMLCanvasElement): Renderer | null {
       const css = getComputedStyle(document.documentElement)
       gl.uniform3fv(u('uA'), hex(css.getPropertyValue('--color-accent') || '#c24c6f'))
       gl.uniform3fv(u('uB'), hex(css.getPropertyValue('--transition-deep') || '#2a1220'))
-      gl.uniform3fv(u('uRim'), hex(css.getPropertyValue('--color-petal') || '#f4d9d4'))
+      gl.uniform3fv(u('uRim'), hex(css.getPropertyValue('--transition-rim') || '#f2a7b8'))
       gl.uniform2f(uRes, canvas.width, canvas.height)
       gl.uniform1f(uProgress, progress)
       gl.uniform1f(uTime, (performance.now() - start) / 1000)

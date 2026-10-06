@@ -181,6 +181,7 @@ main > .section:first-child {
 // Над всем, включая шапку и меню. Пока идёт — перехватывает клики.
 :root {
   --transition-deep: #3a1428;
+  --transition-rim: #ef8fa8; // кромка лепестков — розовая
 }
 
 :root[data-theme='dark'] {
@@ -334,6 +335,7 @@ main > .section:first-child {
 // Над всем, включая шапку и меню. Пока идёт — перехватывает клики.
 :root {
   --transition-deep: #3a1428;
+  --transition-rim: #ef8fa8; // кромка лепестков — розовая
 }
 
 :root[data-theme='dark'] {

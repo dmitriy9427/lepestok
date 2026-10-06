@@ -1,0 +1,288 @@
+// ═══════════════════════════════════════════════════════════════════════════
+// Анимации всего сайта (src/modules/motion.ts): появление при прокрутке и
+// эффекты при наведении.
+//
+// Используем отдельные свойства translate / scale / rotate, а НЕ transform:
+// transform у карточек занят hover-подъёмом и наклоном, а у списков — Flip
+// (GSAP). Свойства складываются, а не перебивают друг друга.
+// Прячем только при html.motion (модуль запущен) — без JS всё видно.
+// ═══════════════════════════════════════════════════════════════════════════
+@use 'abstracts' as *;
+
+$ease-out: cubic-bezier(0.2, 0.8, 0.2, 1);
+
+// ─── Появление ─────────────────────────────────────────────────────────────
+.motion [data-anim] {
+  transition:
+    opacity 0.9s $ease-out var(--anim-delay, 0s),
+    translate 1s $ease-out var(--anim-delay, 0s),
+    scale 1s $ease-out var(--anim-delay, 0s),
+    rotate 1s $ease-out var(--anim-delay, 0s),
+    filter 1s $ease-out var(--anim-delay, 0s),
+    letter-spacing 1.2s $ease-out var(--anim-delay, 0s),
+    clip-path 1.2s cubic-bezier(0.7, 0, 0.2, 1) var(--anim-delay, 0s);
+}
+
+.motion [data-anim]:not(.is-in) {
+  opacity: 0;
+}
+
+// Заголовок проявляется из размытия, чуть снизу.
+.motion [data-anim='title']:not(.is-in) {
+  filter: blur(10px);
+  translate: 0 0.4em;
+}
+
+// Надзаголовок «раздвигает» буквы.
+.motion [data-anim='eyebrow']:not(.is-in) {
+  letter-spacing: 0.5em;
+}
+
+.motion [data-anim='text']:not(.is-in) {
+  translate: 0 24px;
+}
+
+// Карточки — волной: подъём, лёгкий поворот и масштаб.
+.motion [data-anim='card']:not(.is-in) {
+  translate: 0 48px;
+  scale: 0.96;
+  rotate: -1.5deg;
+}
+
+// Фото — проявляется из размытия, «наезжая» из глубины.
+// (Не clip-path-шторка: IntersectionObserver учитывает clip-path самого
+// элемента — полностью «закрытое» фото он считал невидимым навсегда.)
+.motion [data-anim='media']:not(.is-in) {
+  filter: blur(14px);
+  scale: 0.88;
+  rotate: 2deg;
+  translate: 0 40px;
+}
+
+// ─── Блик за курсором ───────────────────────────────────────────────────────
+// Светлое пятно следует за мышью (--mx/--my ставит motion.ts).
+:where(.occasion, .plan-option, .review, .steps__item, .cart-item, .wrap-option, .flower-row, .order-summary) {
+  position: relative;
+  isolation: isolate;
+
+  &::after {
+    position: absolute;
+    inset: 0;
+    z-index: -1;
+    pointer-events: none;
+    content: '';
+    background: radial-gradient(
+      220px circle at var(--mx, 50%) var(--my, 50%),
+      color-mix(in srgb, var(--color-accent) 16%, transparent),
+      transparent 70%
+    );
+    border-radius: inherit;
+    opacity: 0;
+    transition: opacity 0.4s;
+  }
+
+  @media (hover: hover) {
+    &:hover::after {
+      opacity: 1;
+    }
+  }
+}
+
+// Плашки чуть приподнимаются.
+@media (hover: hover) {
+  :where(.plan-option, .wrap-option, .review, .steps__item, .cart-item) {
+    transition:
+      transform 0.4s $ease-out,
+      box-shadow 0.4s $ease-out,
+      border-color 0.3s;
+
+    &:hover {
+      box-shadow: 0 14px 30px -18px rgb(120 60 70 / 35%);
+      transform: translateY(-3px);
+    }
+  }
+
+  // Эмодзи повода покачивается.
+  .occasion:hover .occasion__emoji {
+    animation: wiggle 0.7s ease-in-out;
+  }
+
+  // Номер шага наливается цветом и подпрыгивает.
+  .steps__item:hover .steps__index {
+    animation: index-pop 0.6s $ease-out;
+  }
+
+  // Фото цветка в конструкторе поворачивается.
+  .flower-row:hover .flower-row__photo {
+    transition: rotate 0.6s $ease-out, scale 0.6s $ease-out;
+    rotate: 12deg;
+    scale: 1.08;
+  }
+}
+
+@keyframes wiggle {
+  25% {
+    rotate: -14deg;
+    scale: 1.2;
+  }
+
+  50% {
+    rotate: 10deg;
+  }
+
+  75% {
+    rotate: -6deg;
+  }
+}
+
+@keyframes index-pop {
+  40% {
+    scale: 1.25;
+    translate: 0 -4px;
+  }
+}
+
+// ─── 3D-наклон карточки букета ─────────────────────────────────────────────
+// Карточка поворачивается за курсором (--tx/--ty), по фото скользит блик.
+@media (hover: hover) {
+  .bouquet-card-wrap:hover > .bouquet-card {
+    transition:
+      transform 0.25s ease-out,
+      box-shadow 0.4s;
+    transform: perspective(900px) rotateX(calc(var(--ty, 0) * -6deg)) rotateY(calc(var(--tx, 0) * 7deg))
+      translateY(-6px);
+  }
+
+  .bouquet-card__photo {
+    position: relative;
+
+    &::after {
+      position: absolute;
+      inset: 0;
+      pointer-events: none;
+      content: '';
+      background: radial-gradient(
+        circle at calc(50% + var(--tx, 0) * 50%) calc(50% + var(--ty, 0) * 50%),
+        rgb(255 255 255 / 35%),
+        transparent 55%
+      );
+      opacity: 0;
+      transition: opacity 0.4s;
+      mix-blend-mode: soft-light;
+    }
+
+    .bouquet-card-wrap:hover &::after {
+      opacity: 1;
+    }
+  }
+}
+
+// ─── Кнопки: блик-«вспышка» и подъём ───────────────────────────────────────
+.btn {
+  position: relative;
+  overflow: hidden;
+  isolation: isolate;
+
+  &::after {
+    position: absolute;
+    inset: 0;
+    z-index: -1;
+    pointer-events: none;
+    content: '';
+    background: linear-gradient(105deg, transparent 30%, rgb(255 255 255 / 45%) 50%, transparent 70%);
+    transform: translateX(-120%);
+  }
+
+  @media (hover: hover) {
+    transition:
+      translate 0.3s $ease-out,
+      box-shadow 0.3s,
+      background-color var(--duration),
+      color var(--duration);
+
+    &:hover:not(:disabled) {
+      box-shadow: 0 10px 24px -12px rgb(120 60 70 / 50%);
+      translate: 0 -2px;
+
+      &::after {
+        transition: transform 0.8s $ease-out;
+        transform: translateX(120%);
+      }
+    }
+  }
+}
+
+// ─── Иконки шапки ──────────────────────────────────────────────────────────
+@media (hover: hover) {
+  .icon-link[href$='favorites']:hover svg {
+    animation: heartbeat 0.8s ease-in-out;
+  }
+
+  .icon-link[href$='cart']:hover svg {
+    animation: wiggle 0.6s ease-in-out;
+  }
+
+  // Ссылки подвала сдвигаются, слева проявляется лепесток.
+  .footer__nav a {
+    display: inline-flex;
+    gap: space(2);
+    align-items: center;
+    transition: translate 0.3s $ease-out, color 0.3s;
+
+    &::before {
+      color: var(--color-petal);
+      content: '✿';
+      opacity: 0;
+      transition:
+        opacity 0.3s,
+        rotate 0.5s $ease-out;
+      rotate: -90deg;
+      margin-left: -1.2em;
+    }
+
+    &:hover {
+      translate: 1.2em 0;
+
+      &::before {
+        opacity: 1;
+        rotate: 0deg;
+      }
+    }
+  }
+}
+
+@keyframes heartbeat {
+  20%,
+  60% {
+    scale: 1.25;
+  }
+
+  40%,
+  80% {
+    scale: 1;
+  }
+}
+
+// ─── «Меньше движения» ─────────────────────────────────────────────────────
+@media (prefers-reduced-motion: reduce) {
+  .btn::after,
+  .bouquet-card__photo::after {
+    display: none;
+  }
+
+  .bouquet-card-wrap:hover > .bouquet-card {
+    transform: none;
+  }
+
+  :where(.plan-option, .wrap-option, .review, .steps__item, .cart-item):hover,
+  .btn:hover {
+    translate: none;
+    transform: none;
+  }
+
+  .occasion:hover .occasion__emoji,
+  .steps__item:hover .steps__index,
+  .icon-link:hover svg {
+    animation: none;
+  }
+}

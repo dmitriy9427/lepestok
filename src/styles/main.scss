@@ -8,6 +8,7 @@
 //   sections/_home.scss       — главная
 //   sections/_shop.scss       — каталог, букет, конструктор
 //   sections/_checkout.scss   — корзина, оформление, подписка, 404
+//   _motion.scss              — появление при прокрутке и hover-эффекты (последним)
 // ═══════════════════════════════════════════════════════════════════════════
 @use 'abstracts';
 @use 'kit/scss';
@@ -18,3 +19,4 @@
 @use 'sections/home';
 @use 'sections/shop';
 @use 'sections/checkout';
+@use 'motion';
