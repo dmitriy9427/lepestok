@@ -9,6 +9,7 @@ import { createRoot } from 'react-dom/client'
 import { BrowserRouter } from 'react-router'
 import { KitProvider } from 'kit/react/index.js'
 import { App } from './App'
+import { finishPreloader } from './modules/preloader'
 import '@fontsource-variable/cormorant'
 import '@fontsource-variable/manrope'
 import './styles/main.scss'
@@ -33,6 +34,9 @@ createRoot(root).render(
     </KitProvider>
   </StrictMode>,
 )
+
+// Прелоадер (разметка — в index.html) уходит, когда приложение отрисовалось.
+requestAnimationFrame(() => finishPreloader())
 
 // Dev-панель — только в разработке (в сборку не попадает, см. kit/devtools).
 if (import.meta.env.DEV) {

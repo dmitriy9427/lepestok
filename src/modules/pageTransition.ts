@@ -203,6 +203,21 @@ function run(reveal: boolean, duration: number, ease: string): Promise<void> {
   })
 }
 
+/**
+ * Залить экран МГНОВЕННО (без анимации) — для прелоадера: он лежит поверх,
+ * под ним уже готова заливка, и после его исчезновения reveal() раскрывает
+ * страницу так же, как при переходе.
+ */
+export function coverNow() {
+  if (prefersReducedMotion()) return
+  ensureLayer()
+  tween?.kill()
+  root!.classList.add('is-active')
+  if (renderer) renderer.draw(1, false)
+  else root!.style.setProperty('--p', '1')
+  covered = true
+}
+
 /** Цветок заливает экран. */
 export const cover = () => run(false, 0.65, 'power2.in')
 

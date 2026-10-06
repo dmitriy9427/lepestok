@@ -22,9 +22,155 @@
         var t = JSON.parse(localStorage.getItem('theme'))
         if (t === 'dark' || t === 'light') document.documentElement.dataset.theme = t
       } catch (e) {}
+      // Прелоадер — один раз за сессию вкладки (src/modules/preloader.ts).
+      try {
+        if (sessionStorage.getItem('preloaded')) document.documentElement.classList.add('no-preloader')
+      } catch (e) {}
+      // Страховка: приложение не стартовало за 6 с — убираем прелоадер.
+      setTimeout(function () {
+        var el = document.getElementById('preloader')
+        if (el && !el.dataset.owned) el.remove()
+      }, 6000)
     </script>
+    <!-- Прелоадер: стили встроены, чтобы он был виден с первого кадра, до JS.
+         Фон — те же цвета, что у шейдерного перехода: в конце прелоадер
+         «превращается» в залитый экран, и тот растворяется цветком из центра. -->
+    <style>
+      #preloader {
+        --pl-a: #c24c6f;
+        --pl-b: #3a1428;
+        position: fixed;
+        inset: 0;
+        z-index: 1001;
+        display: grid;
+        place-items: center;
+        background: radial-gradient(circle at 50% 50%, var(--pl-a) 0%, var(--pl-b) 78%);
+        color: #f4d9d4;
+        transition: opacity 0.35s ease;
+      }
+      [data-theme='dark'] #preloader {
+        --pl-a: #e8789a;
+        --pl-b: #0e0a0d;
+      }
+      @media (prefers-color-scheme: dark) {
+        :root:not([data-theme='light']) #preloader {
+          --pl-a: #e8789a;
+          --pl-b: #0e0a0d;
+        }
+      }
+      .no-preloader #preloader,
+      #preloader.is-done {
+        opacity: 0;
+        pointer-events: none;
+      }
+      .no-preloader #preloader {
+        display: none;
+      }
+      .preloader__inner {
+        display: grid;
+        gap: 18px;
+        justify-items: center;
+      }
+      .preloader__mark {
+        width: clamp(140px, 16vmin, 200px);
+        height: clamp(140px, 16vmin, 200px);
+        overflow: visible;
+      }
+      .preloader__petal {
+        fill: #f4d9d4;
+        transform: scale(0) rotate(-40deg);
+        transform-box: view-box;
+        transform-origin: 0 0;
+        animation: pl-bloom 0.7s cubic-bezier(0.34, 1.56, 0.64, 1) forwards;
+      }
+      .preloader__core {
+        fill: #f6b13d;
+        transform: scale(0);
+        transform-box: view-box;
+        transform-origin: 0 0;
+        animation: pl-bloom 0.5s 0.95s cubic-bezier(0.34, 1.56, 0.64, 1) forwards;
+      }
+      .preloader__ring-track {
+        fill: none;
+        stroke: rgb(244 217 212 / 18%);
+        stroke-width: 0.6;
+      }
+      .preloader__ring {
+        fill: none;
+        stroke: #f4d9d4;
+        stroke-width: 0.6;
+        stroke-linecap: round;
+        stroke-dasharray: 125.7;
+        stroke-dashoffset: 125.7;
+        transform: rotate(-90deg);
+        transform-box: view-box;
+        transform-origin: 0 0;
+        transition: stroke-dashoffset 0.3s ease-out;
+      }
+      .preloader__flower {
+        animation: pl-spin 9s linear infinite;
+        transform-box: view-box;
+        transform-origin: 0 0;
+      }
+      .preloader__name {
+        margin: 0;
+        font: 600 clamp(32px, 4.4vmin, 48px)/1 'Cormorant Variable', Georgia, serif;
+        letter-spacing: 0.04em;
+        opacity: 0;
+        animation: pl-name 1s 0.6s cubic-bezier(0.2, 0.8, 0.2, 1) forwards;
+      }
+      .preloader__count {
+        min-width: 4ch;
+        font: 700 13px/1 system-ui, sans-serif;
+        letter-spacing: 0.25em;
+        text-align: center;
+        opacity: 0.7;
+        font-variant-numeric: tabular-nums;
+      }
+      @keyframes pl-bloom {
+        to {
+          transform: none;
+        }
+      }
+      @keyframes pl-spin {
+        to {
+          rotate: 360deg;
+        }
+      }
+      @keyframes pl-name {
+        from {
+          letter-spacing: 0.5em;
+          filter: blur(6px);
+        }
+        to {
+          opacity: 1;
+        }
+      }
+      @media (prefers-reduced-motion: reduce) {
+        .preloader__petal,
+        .preloader__core,
+        .preloader__name,
+        .preloader__flower {
+          animation: none;
+          transform: none;
+          opacity: 1;
+        }
+      }
+    </style>
+    <noscript><style>#preloader { display: none; }</style></noscript>
   </head>
   <body>
+    <div id="preloader" role="status" aria-label="Загрузка">
+      <div class="preloader__inner" aria-hidden="true">
+        <svg class="preloader__mark" viewBox="-22 -22 44 44">
+          <circle class="preloader__ring-track" r="20" />
+          <circle class="preloader__ring" r="20" />
+          <g class="preloader__flower"><g transform="rotate(0)"><path class="preloader__petal" style="animation-delay:0.10s" d="M0 0C5 -3 5 -12 0 -15C-5 -12 -5 -3 0 0Z" /></g><g transform="rotate(72)"><path class="preloader__petal" style="animation-delay:0.25s" d="M0 0C5 -3 5 -12 0 -15C-5 -12 -5 -3 0 0Z" /></g><g transform="rotate(144)"><path class="preloader__petal" style="animation-delay:0.40s" d="M0 0C5 -3 5 -12 0 -15C-5 -12 -5 -3 0 0Z" /></g><g transform="rotate(216)"><path class="preloader__petal" style="animation-delay:0.55s" d="M0 0C5 -3 5 -12 0 -15C-5 -12 -5 -3 0 0Z" /></g><g transform="rotate(288)"><path class="preloader__petal" style="animation-delay:0.70s" d="M0 0C5 -3 5 -12 0 -15C-5 -12 -5 -3 0 0Z" /></g><circle class="preloader__core" r="3" /></g>
+        </svg>
+        <p class="preloader__name">Лепесток</p>
+        <span class="preloader__count">0 %</span>
+      </div>
+    </div>
     <div id="root"></div>
     <script type="module" src="/src/main.tsx"></script>
   </body>
