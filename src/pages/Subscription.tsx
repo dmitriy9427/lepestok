@@ -12,6 +12,7 @@ import { FREQUENCIES, PLAN_SIZES, TERMS, subscriptionPrice, type Frequency, type
 import { createSubscription } from '../lib/api'
 import { subscriptionSchema } from '../forms/schemas'
 import { bouquetById } from '../data/bouquets'
+import { Bloom } from '../components/Bloom'
 
 const FORM = {
   schema: subscriptionSchema,
@@ -43,8 +44,29 @@ export function Subscription() {
         </p>
 
         <div className="subscription__grid">
+          {/* Фото в «живом» контуре-лепестке; бейдж и плашка — поверх, вне обрезки. */}
           <div className="subscription__art">
-            <img key={size} src={PHOTO[size]} alt="Пример букета по подписке" width="1200" height="1500" />
+            <div className="subscription__photo">
+              <img key={size} src={PHOTO[size]} alt="Пример букета по подписке" width="1200" height="1500" />
+            </div>
+            <div className="subscription__badge" aria-hidden="true">
+              <svg viewBox="0 0 120 120">
+                <path id="sub-badge-circle" d="M60 60 m-46 0 a46 46 0 1 1 92 0 a46 46 0 1 1 -92 0" fill="none" />
+                <text>
+                  <textPath href="#sub-badge-circle" startOffset="0">
+                    свежие цветы · каждый раз новый букет ·
+                  </textPath>
+                </text>
+              </svg>
+              <Bloom petal="#f2a7b8" shade="#c24c6f" center="#a8375a" className="subscription__badge-bloom" />
+            </div>
+            <p className="subscription__sticker" aria-live="polite">
+              <span className="subscription__sticker-label">
+                {FREQUENCIES[frequency].title} · −{Math.round(price.discount * 100)} %
+              </span>
+              <strong>{formatPrice(price.perDelivery)}</strong>
+              <span className="subscription__sticker-label">за букет «{PLAN_SIZES[size].title.toLowerCase()}»</span>
+            </p>
           </div>
 
           <div className="subscription__calc">

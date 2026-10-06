@@ -297,12 +297,120 @@
   }
 }
 
+// Фото в органичном контуре: border-radius из 8 значений медленно
+// перетекает — форма «дышит», как лепесток. Анимируется только радиус
+// одного элемента — дёшево.
 .subscription__art {
-  width: 100%; // без этого SVG с margin: auto сжимается до 300 px
+  position: relative;
+  width: 100%; // без этого элемент grid с margin: auto сжимается
   max-width: rem(460px);
   margin-inline: auto;
+}
+
+.subscription__photo {
   overflow: hidden;
-  border-radius: 999px 999px radius('lg') radius('lg'); // арка
+  border-radius: 62% 38% 54% 46% / 48% 58% 42% 52%;
+  box-shadow: 0 40px 80px -30px rgb(120 60 70 / 45%);
+  animation: petal-morph 14s ease-in-out infinite alternate;
+}
+
+@keyframes petal-morph {
+  33% {
+    border-radius: 44% 56% 40% 60% / 60% 44% 56% 40%;
+  }
+
+  66% {
+    border-radius: 56% 44% 62% 38% / 42% 62% 38% 58%;
+  }
+
+  100% {
+    border-radius: 40% 60% 48% 52% / 55% 40% 60% 45%;
+  }
+}
+
+// Круглый бейдж: текст по кругу медленно вращается, в центре — цветок.
+.subscription__badge {
+  position: absolute;
+  top: 2%;
+  right: -4%;
+  display: grid;
+  place-items: center;
+  width: fluid(110px, 140px);
+  aspect-ratio: 1;
+  background: var(--color-paper);
+  border-radius: 50%;
+  box-shadow: var(--shadow-lg);
+
+  svg {
+    position: absolute;
+    inset: 0;
+    animation: badge-spin 18s linear infinite;
+  }
+
+  text {
+    font-size: 10.5px;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.14em;
+    fill: var(--color-accent);
+  }
+}
+
+.subscription__badge-bloom {
+  width: 44%;
+}
+
+@keyframes badge-spin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+// Плашка с ценой за букет — живая: меняется вместе с калькулятором.
+.subscription__sticker {
+  position: absolute;
+  bottom: 8%;
+  left: -6%;
+  display: grid;
+  gap: 2px;
+  padding: space(3) space(5);
+  margin: 0;
+  background: color-mix(in srgb, var(--color-paper) 88%, transparent);
+  border: 1px solid var(--color-border);
+  border-radius: radius('lg');
+  box-shadow: var(--shadow-lg);
+  backdrop-filter: blur(8px);
+  animation: sticker-float 5s ease-in-out infinite;
+
+  strong {
+    font-family: var(--font-heading);
+    font-size: rem(30px);
+    font-variant-numeric: tabular-nums;
+    line-height: 1.1;
+  }
+
+  @include down('md') {
+    left: 2%;
+  }
+}
+
+.subscription__sticker-label {
+  font-size: rem(13px);
+  color: var(--color-muted);
+}
+
+@keyframes sticker-float {
+  50% {
+    transform: translateY(-8px);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .subscription__photo,
+  .subscription__badge svg,
+  .subscription__sticker {
+    animation: none;
+  }
 }
 
 .subscription__calc {

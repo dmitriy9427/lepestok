@@ -3,7 +3,7 @@
  * Модули кита sticky-header и menu — через useModule.
  */
 import type { CSSProperties } from 'react'
-import { Link, NavLink } from 'react-router'
+import { Link, NavLink, useLocation } from 'react-router'
 import { useModule } from 'kit/react/index.js'
 import stickyHeader from 'kit/js/modules/sticky-header/index.js'
 import menu from 'kit/js/modules/menu/index.js'
@@ -22,6 +22,7 @@ const LINKS = [
 const MENU_OPTIONS = { target: 'site-menu' }
 
 export function Header() {
+  const { pathname, hash } = useLocation()
   const header = useModule<HTMLElement>(stickyHeader)
   const burger = useModule<HTMLButtonElement>(menu, MENU_OPTIONS)
   const count = cartCount(cart.use())
@@ -36,7 +37,12 @@ export function Header() {
             {LINKS.map(({ to, label }, i) => (
               <li key={to} style={{ '--i': i } as CSSProperties}>
                 {to.includes('#') ? (
-                  <Link className="nav__link" to={to}>
+                  // NavLink не учитывает #якорь — активность считаем сами.
+                  <Link
+                    className={`nav__link${pathname + hash === to ? ' active' : ''}`}
+                    to={to}
+                    aria-current={pathname + hash === to ? 'location' : undefined}
+                  >
                     <span className="nav__index">0{i + 1}</span>
                     {label}
                   </Link>

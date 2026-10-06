@@ -177,6 +177,72 @@ main > .section:first-child {
   }
 }
 
+// ─── Переход между страницами (modules/pageTransition.ts) ──────────────────
+// Над всем, включая шапку и меню. Пока идёт — перехватывает клики.
+:root {
+  --transition-deep: #3a1428;
+}
+
+:root[data-theme='dark'] {
+  --transition-deep: #0e0a0d;
+}
+
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme='light']) {
+    --transition-deep: #0e0a0d;
+  }
+}
+
+.page-transition {
+  position: fixed;
+  inset: 0;
+  z-index: 1000;
+  visibility: hidden;
+  pointer-events: none;
+
+  &.is-active {
+    visibility: visible;
+    pointer-events: auto;
+  }
+
+  // Без WebGL: тот же сценарий кругом на CSS (--p 0…1 ставит JS).
+  &.is-fallback::before {
+    position: absolute;
+    inset: 0;
+    content: '';
+    background: radial-gradient(circle, var(--color-accent), var(--transition-deep) 75%);
+    clip-path: circle(calc(var(--p, 0) * 75%) at 50% 50%);
+  }
+}
+
+.page-transition__canvas {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+}
+
+// Пока экран залит — в центре поворачивается цветок-логотип.
+.page-transition__mark {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: rem(72px);
+  aspect-ratio: 1;
+  background: var(--color-petal);
+  opacity: 0;
+  transition:
+    opacity 0.3s,
+    transform 0.9s var(--ease);
+  transform: translate(-50%, -50%) scale(0.4) rotate(-90deg);
+  mask: url('/favicon.svg') center / contain no-repeat;
+
+  .is-covered & {
+    opacity: 0.9;
+    transform: translate(-50%, -50%) scale(1) rotate(0);
+  }
+}
+
 // ─── Шапка ─────────────────────────────────────────────────────────────────
 .logo {
   display: inline-flex;
@@ -262,6 +328,72 @@ main > .section:first-child {
 // выходят за viewBox — не обрезаем.
 .bloom {
   overflow: visible;
+}
+
+// ─── Переход между страницами (modules/pageTransition.ts) ──────────────────
+// Над всем, включая шапку и меню. Пока идёт — перехватывает клики.
+:root {
+  --transition-deep: #3a1428;
+}
+
+:root[data-theme='dark'] {
+  --transition-deep: #0e0a0d;
+}
+
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme='light']) {
+    --transition-deep: #0e0a0d;
+  }
+}
+
+.page-transition {
+  position: fixed;
+  inset: 0;
+  z-index: 1000;
+  visibility: hidden;
+  pointer-events: none;
+
+  &.is-active {
+    visibility: visible;
+    pointer-events: auto;
+  }
+
+  // Без WebGL: тот же сценарий кругом на CSS (--p 0…1 ставит JS).
+  &.is-fallback::before {
+    position: absolute;
+    inset: 0;
+    content: '';
+    background: radial-gradient(circle, var(--color-accent), var(--transition-deep) 75%);
+    clip-path: circle(calc(var(--p, 0) * 75%) at 50% 50%);
+  }
+}
+
+.page-transition__canvas {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+}
+
+// Пока экран залит — в центре поворачивается цветок-логотип.
+.page-transition__mark {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: rem(72px);
+  aspect-ratio: 1;
+  background: var(--color-petal);
+  opacity: 0;
+  transition:
+    opacity 0.3s,
+    transform 0.9s var(--ease);
+  transform: translate(-50%, -50%) scale(0.4) rotate(-90deg);
+  mask: url('/favicon.svg') center / contain no-repeat;
+
+  .is-covered & {
+    opacity: 0.9;
+    transform: translate(-50%, -50%) scale(1) rotate(0);
+  }
 }
 
 // ─── Шапка ─────────────────────────────────────────────────────────────────
