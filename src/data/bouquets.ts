@@ -9,6 +9,7 @@
  * credit и README). Состав подобран под фото, чтобы цена «совпадала» с
  * картинкой. Своё фото: положите файл и поменяйте photo/credit.
  */
+import { asset } from '../lib/asset'
 import type { Composition } from '../lib/bouquet'
 
 export type Occasion = 'birthday' | 'love' | 'wedding' | 'sorry' | 'mom' | 'just' | 'baby'
@@ -47,7 +48,7 @@ export const BOUQUETS: Bouquet[] = [
       wrap: 'film',
       ribbon: 'satin-blush',
     },
-    photo: '/photos/utro-v-provanse.jpg',
+    photo: asset('/photos/utro-v-provanse.jpg'),
     credit: { author: 'Julia Çarı', url: 'https://www.pexels.com/photo/32178975/' },
   },
   {
@@ -63,7 +64,7 @@ export const BOUQUETS: Bouquet[] = [
       wrap: 'kraft',
       ribbon: 'satin-sage',
     },
-    photo: '/photos/alaya-strast.jpg',
+    photo: asset('/photos/alaya-strast.jpg'),
     credit: { author: 'Shameel Mukkath', url: 'https://www.pexels.com/photo/11196806/' },
   },
   {
@@ -81,7 +82,7 @@ export const BOUQUETS: Bouquet[] = [
       wrap: 'film',
       ribbon: 'silk-cream',
     },
-    photo: '/photos/persikovyy-zakat.jpg',
+    photo: asset('/photos/persikovyy-zakat.jpg'),
     credit: { author: 'Faustin Nkurunziza', url: 'https://www.pexels.com/photo/31624870/' },
   },
   {
@@ -94,7 +95,7 @@ export const BOUQUETS: Bouquet[] = [
       wrap: 'kraft',
       ribbon: 'twine',
     },
-    photo: '/photos/polevoy.jpg',
+    photo: asset('/photos/polevoy.jpg'),
     credit: { author: 'Katrenur', url: 'https://www.pexels.com/photo/10583573/' },
   },
   {
@@ -110,7 +111,7 @@ export const BOUQUETS: Bouquet[] = [
       wrap: 'paper',
       ribbon: 'silk-cream',
     },
-    photo: '/photos/belaya-vual.jpg',
+    photo: asset('/photos/belaya-vual.jpg'),
     credit: { author: 'Brent Keane', url: 'https://www.pexels.com/photo/1702371/' },
   },
   {
@@ -128,7 +129,7 @@ export const BOUQUETS: Bouquet[] = [
       wrap: 'box',
       ribbon: 'satin-blush',
     },
-    photo: '/photos/rozy-v-korobke.jpg',
+    photo: asset('/photos/rozy-v-korobke.jpg'),
     credit: { author: 'Vladimir Srajber', url: 'https://www.pexels.com/photo/18057437/' },
   },
   {
@@ -145,7 +146,7 @@ export const BOUQUETS: Bouquet[] = [
       wrap: 'film',
       ribbon: 'satin-sage',
     },
-    photo: '/photos/lavandovyy-son.jpg',
+    photo: asset('/photos/lavandovyy-son.jpg'),
     credit: { author: 'Ssümçiğ', url: 'https://www.pexels.com/photo/39282635/' },
   },
   {
@@ -158,7 +159,7 @@ export const BOUQUETS: Bouquet[] = [
       wrap: 'kraft',
       ribbon: 'satin-blush',
     },
-    photo: '/photos/malenkoe-schaste.jpg',
+    photo: asset('/photos/malenkoe-schaste.jpg'),
     credit: { author: 'Anastasiya Badun', url: 'https://www.pexels.com/photo/36688271/' },
   },
   {
@@ -175,7 +176,7 @@ export const BOUQUETS: Bouquet[] = [
       wrap: 'kraft',
       ribbon: 'silk-cream',
     },
-    photo: '/photos/osenniy-barhat.jpg',
+    photo: asset('/photos/osenniy-barhat.jpg'),
     credit: { author: 'Ellie Burgin', url: 'https://www.pexels.com/photo/28890606/' },
   },
   {
@@ -194,7 +195,7 @@ export const BOUQUETS: Bouquet[] = [
       wrap: 'paper',
       ribbon: 'satin-sage',
     },
-    photo: '/photos/vesenniy-sad.jpg',
+    photo: asset('/photos/vesenniy-sad.jpg'),
     credit: { author: 'Michael Obstoj', url: 'https://www.pexels.com/photo/30734753/' },
   },
   {
@@ -207,7 +208,7 @@ export const BOUQUETS: Bouquet[] = [
       wrap: 'film',
       ribbon: 'silk-cream',
     },
-    photo: '/photos/oblako.jpg',
+    photo: asset('/photos/oblako.jpg'),
     credit: { author: 'Tuan Vy', url: 'https://www.pexels.com/photo/19843318/' },
   },
   {
@@ -221,7 +222,7 @@ export const BOUQUETS: Bouquet[] = [
       wrap: 'film',
       ribbon: 'satin-blush',
     },
-    photo: '/photos/korallovyy-rif.jpg',
+    photo: asset('/photos/korallovyy-rif.jpg'),
     credit: { author: 'Marta Dzedyshko', url: 'https://www.pexels.com/photo/17117470/' },
   },
 ]

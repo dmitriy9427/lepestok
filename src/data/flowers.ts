@@ -7,6 +7,7 @@
  * Тест в lib.test.ts проверяет, что фото есть для каждого оттенка.
  * Цены — за штуку, в рублях.
  */
+import { asset } from '../lib/asset'
 
 export type ColorId =
   'white' | 'cream' | 'blush' | 'pink' | 'peony' | 'coral' | 'peach' | 'red' | 'burgundy' | 'yellow' | 'lilac' | 'sage'
@@ -56,7 +57,7 @@ export interface Flower {
 }
 
 /** Фото цветка в нужном оттенке: public/photos/flowers/<id>-<оттенок>.jpg (Pexels). */
-export const flowerPhoto = (id: FlowerId, color: ColorId) => `/photos/flowers/${id}-${color}.jpg`
+export const flowerPhoto = (id: FlowerId, color: ColorId) => asset(`/photos/flowers/${id}-${color}.jpg`)
 
 export const FLOWERS: Flower[] = [
   {

@@ -12,6 +12,7 @@ import { BOUQUETS, OCCASIONS, type Occasion } from '../data/bouquets'
 import { FAQ, REVIEWS, STEPS } from '../data/content'
 import type { Composition } from '../lib/bouquet'
 import { ASSEMBLY_HOURS } from '../lib/delivery'
+import { asset } from '../lib/asset'
 import petals from '../modules/petals'
 import heroReveal from '../modules/heroReveal'
 import { StemCollage } from '../components/Collage'
@@ -100,8 +101,8 @@ export function Home() {
               (iOS открыл бы на весь экран); играет только пока hero на экране. */}
           <video
             className="hero__video"
-            src="/video/hero.mp4"
-            poster="/video/hero-poster.jpg"
+            src={asset('/video/hero.mp4')}
+            poster={asset('/video/hero-poster.jpg')}
             autoPlay={!reduced}
             muted
             loop

@@ -15,6 +15,7 @@
  */
 import { gsap } from 'kit/js/core/gsap.js'
 import { prefersReducedMotion } from 'kit/js/core/env.js'
+import { asset } from '../lib/asset'
 import { coverNow, reveal } from './pageTransition'
 
 const MIN_MS = 1300
@@ -52,7 +53,7 @@ export async function finishPreloader() {
   // Задачи загрузки; прогресс — доля выполненных, плавно догоняет.
   const tasks = [
     document.fonts?.ready ?? Promise.resolve(),
-    location.pathname === '/' ? imageLoaded('/video/hero-poster.jpg') : Promise.resolve(),
+    location.pathname === import.meta.env.BASE_URL ? imageLoaded(asset('/video/hero-poster.jpg')) : Promise.resolve(),
     delay(MIN_MS),
   ]
   let done = 0
