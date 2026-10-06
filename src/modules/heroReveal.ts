@@ -43,6 +43,25 @@ export default function heroReveal(section: HTMLElement, ctx: { reduced?: boolea
     )
   }
 
+  // Шапка прозрачная, пока под ней hero (и при прокрутке назад тоже) —
+  // иначе над тёмным видео вспыхивает кремовая полоса. Стили — .is-over-hero.
+  const header = document.querySelector('.header')
+  if (header) {
+    const over = ScrollTrigger.create({
+      trigger: section,
+      // −1, а не 'top top' (= 0): на прокрутке ровно 0 ScrollTrigger считает,
+      // что ушли «назад за начало», и снимал класс в самом верху страницы.
+      start: -1,
+      end: () => `bottom top+=${header.getBoundingClientRect().height}`,
+      onToggle: (self) => header.classList.toggle('is-over-hero', self.isActive),
+    })
+    header.classList.toggle('is-over-hero', over.isActive)
+    d.add(() => {
+      over.kill()
+      header.classList.remove('is-over-hero')
+    })
+  }
+
   if (ctx.reduced) return { destroy: d.dispose }
   section.classList.add('is-intro')
 

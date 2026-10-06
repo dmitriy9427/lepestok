@@ -10,6 +10,7 @@ import menu from 'kit/js/modules/menu/index.js'
 import { cart, cartCount, favorites } from '../lib/cart'
 import { Logo } from './Logo'
 import { Bloom } from './Bloom'
+import { ThemeToggle } from './ThemeToggle'
 
 const LINKS = [
   { to: '/catalog', label: 'Букеты' },
@@ -65,6 +66,7 @@ export function Header() {
           </div>
         </nav>
         <div className="header__actions">
+          <ThemeToggle />
           <Link className="icon-link" to="/favorites" aria-label={`Избранное: ${favCount}`}>
             <svg viewBox="0 0 24 24" aria-hidden="true">
               <path d="M12 20s-7-4.4-9.2-8.6C1.2 8.3 3 4.5 6.6 4.5c2.1 0 3.6 1.2 4.4 2.6.8-1.4 2.3-2.6 4.4-2.6 3.6 0 5.4 3.8 3.8 6.9C19 15.6 12 20 12 20z" />

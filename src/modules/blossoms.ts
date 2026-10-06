@@ -14,6 +14,7 @@
  */
 import { gsap } from 'kit/js/core/gsap.js'
 import { createDisposer } from 'kit/js/core/lifecycle.js'
+import { currentTheme } from 'kit/js/modules/theme-switch/index.js'
 import { createRandom, between } from '../lib/random'
 
 const PALETTES = [
@@ -96,6 +97,17 @@ export default function blossoms(
   let width = 0
   let height = 0
   const mouse = { x: -9999, y: -9999 }
+  // Тёмная тема: цветы складываются со светом ('lighter') — мягко светятся,
+  // а не лежат серыми пятнами; яркость пониже.
+  let dim = 1
+  let blend: GlobalCompositeOperation = 'source-over'
+  const readTheme = () => {
+    const dark = currentTheme() === 'dark'
+    dim = dark ? 0.85 : 1
+    blend = dark ? 'lighter' : 'source-over'
+  }
+  readTheme()
+  d.listen(document, 'theme:change', readTheme)
 
   const resize = () => {
     const dpr = Math.min(window.devicePixelRatio || 1, 2)
@@ -152,7 +164,8 @@ export default function blossoms(
       f.py *= 0.96
       y += f.py
       g.save()
-      g.globalAlpha = f.layer.alpha
+      g.globalAlpha = f.layer.alpha * dim
+      g.globalCompositeOperation = blend
       g.translate(x + f.px, y)
       g.rotate(f.angle)
       g.drawImage(f.sprite, -f.size / 2, -f.size / 2, f.size, f.size)
@@ -162,6 +175,7 @@ export default function blossoms(
 
   if (ctx.reduced) {
     draw(0)
+    d.listen(document, 'theme:change', () => draw(0))
     return { destroy: d.dispose }
   }
 

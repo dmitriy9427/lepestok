@@ -88,7 +88,11 @@ $hero-dark: #140b10;
   letter-spacing: -0.04em;
   white-space: nowrap;
   transform-origin: 50% 55%;
-  will-change: transform;
+  // Поля внутри: «хвосты» букв Cormorant (Л, к) выступают за рамку текста.
+  // Пока слово увеличено, браузер держит его отдельным слоем размером
+  // с рамку — без полей края букв обрезались после прокрутки туда-обратно.
+  // will-change не ставим: он фиксирует растр и сам провоцирует обрезку.
+  padding: 0.12em 0.2em;
 }
 
 .hero__hint {
@@ -144,6 +148,7 @@ $hero-dark: #140b10;
 
 .hero__content {
   position: relative;
+  max-width: none; // на всю ширину экрана, как шапка
   z-index: 3;
   display: grid;
   gap: space(6);
@@ -185,17 +190,8 @@ $hero-dark: #140b10;
 
   li::before {
     margin-right: space(2);
-    color: var(--color-blush);
+    color: var(--color-petal);
     content: '✿';
-  }
-}
-
-// Шапка над видео (главная, пока не прокрутили): прозрачная, светлая.
-.header:has(~ main .hero):not(.is-scrolled) {
-  color: #fff;
-
-  &::before {
-    opacity: 0;
   }
 }
 

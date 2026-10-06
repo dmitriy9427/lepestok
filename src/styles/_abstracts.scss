@@ -22,6 +22,25 @@
     'sage': #8fa58a,
     'forest': #2f3d33,
     'paper': #fffdf9,
+    // Светло-розовый для текста на тёмных блоках (меню, подвал, промо) —
+    // одинаковый в обеих темах, в отличие от blush (это фон).
+    'petal': #f4d9d4,
+  ),
+  // Тёмная тема «ночной сад»: баклажан вместо кремовой бумаги, пион ярче.
+  $colors-dark: (
+    'bg': #151013,
+    'surface': #1f181c,
+    'text': #f2e9e3,
+    'muted': #a8999a,
+    'border': #342a30,
+    'accent': #e8789a,
+    'accent-contrast': #1a1013,
+    'focus': #e8789a,
+    'blush': #43262f,
+    'sage': #8fa58a,
+    'forest': #1c2a22,
+    'paper': #1d171b,
+    'petal': #f4d9d4,
   ),
   $font-base: (
     'Manrope Variable',

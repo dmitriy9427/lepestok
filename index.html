@@ -1,5 +1,5 @@
 <!doctype html>
-<html lang="ru" data-theme="light">
+<html lang="ru">
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
@@ -10,11 +10,18 @@
     <meta property="og:description" content="Готовые букеты и конструктор букета. Доставка за 2 часа." />
     <!-- TODO: абсолютный адрес картинки на проде (https://…/og.jpg) -->
     <meta property="og:image" content="/og.jpg" />
-    <meta name="theme-color" content="#fbf6ef" />
+    <meta name="theme-color" content="#fbf6ef" media="(prefers-color-scheme: light)" />
+    <meta name="theme-color" content="#151013" media="(prefers-color-scheme: dark)" />
     <link rel="icon" href="/favicon.svg" type="image/svg+xml" />
-    <!-- Тема у магазина одна (светлая): data-theme="light" выключает тёмную тему системы. -->
+    <!-- Тема: сохранённый выбор ставим ДО отрисовки — без «вспышки» светлой
+         страницы (как THEME_SCRIPT из kit/js/modules/theme-switch). Нет выбора —
+         системная тема. -->
     <script>
       document.documentElement.classList.add('js')
+      try {
+        var t = JSON.parse(localStorage.getItem('theme'))
+        if (t === 'dark' || t === 'light') document.documentElement.dataset.theme = t
+      } catch (e) {}
     </script>
   </head>
   <body>
