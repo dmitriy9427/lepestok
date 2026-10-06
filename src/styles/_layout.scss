@@ -7,6 +7,17 @@ body {
   background: var(--color-bg);
 }
 
+// Плывущие цветы (src/modules/blossoms.ts): весь экран, под контентом,
+// мышь не перехватывают. Секции с фоном (промо, подвал) их закрывают.
+.ambient {
+  position: fixed;
+  inset: 0;
+  z-index: -1;
+  width: 100%;
+  height: 100%;
+  pointer-events: none;
+}
+
 :is(h1, h2, h3, .h1, .h2, .h3) {
   // Cormorant — тонкий, с маленькими строчными: вес 600 и кегль крупнее обычного.
   // (Fraunces не подошёл — в нём нет кириллицы, заголовки падали в Georgia.)
@@ -183,6 +194,263 @@ main > .section:first-child {
   &.active::after,
   &:hover::after {
     transform: scaleX(1);
+  }
+}
+
+// Декоративный цветок (components/Bloom.tsx): лепестки при вращении
+// выходят за viewBox — не обрезаем.
+.bloom {
+  overflow: visible;
+}
+
+// ─── Бургер и мобильное меню ───────────────────────────────────────────────
+// Кнопка — круг с двумя полосками разной длины; открыто — крестик на акценте.
+// Меню раскрывается кругом из точки бургера (clip-path), внутри — тёмный
+// фон, крупные ссылки по очереди, контакты и медленно вращающиеся цветы.
+$menu-dark: #1d1418;
+
+.burger {
+  width: rem(48px);
+  height: rem(48px);
+  color: var(--color-text);
+  background: var(--color-blush);
+  border-radius: 50%;
+  transition:
+    background-color 0.4s var(--ease),
+    color 0.4s,
+    transform 0.6s var(--ease);
+
+  @include hover {
+    transform: scale(1.06);
+  }
+
+  &[aria-expanded='true'] {
+    color: #fff;
+    background: var(--color-accent);
+    transform: rotate(90deg);
+  }
+}
+
+.burger__lines {
+  width: rem(20px);
+  height: rem(10px);
+  background: none;
+
+  &::before,
+  &::after {
+    right: 0;
+    left: auto;
+    height: 2px;
+    background: currentcolor;
+    border-radius: 2px;
+    transition:
+      transform 0.5s var(--ease),
+      width 0.4s var(--ease);
+  }
+
+  &::before {
+    top: 0;
+    width: 100%;
+  }
+
+  &::after {
+    top: auto;
+    bottom: 0;
+    width: 60%;
+  }
+
+  .burger:hover &::after {
+    width: 100%;
+  }
+
+  [aria-expanded='true'] > & {
+    background: none;
+
+    &::before {
+      width: 100%;
+      transform: translateY(4px) rotate(45deg);
+    }
+
+    &::after {
+      width: 100%;
+      transform: translateY(-4px) rotate(-45deg);
+    }
+  }
+}
+
+.nav__index,
+.mobile-menu__extra,
+.mobile-menu__decor {
+  display: none;
+}
+
+@include down('lg') {
+  .mobile-menu {
+    display: flex;
+    flex-direction: column;
+    gap: space(10);
+    padding-top: calc(var(--header-height) + #{space(10)});
+    color: #fff;
+    background:
+      radial-gradient(60% 45% at 90% 0%, rgb(194 76 111 / 45%), transparent 70%),
+      radial-gradient(50% 40% at 0% 100%, rgb(127 154 120 / 35%), transparent 70%), $menu-dark;
+    clip-path: circle(0 at calc(100% - var(--container-padding) - 24px) calc(var(--header-height) / 2));
+    opacity: 1;
+    transition:
+      clip-path 0.7s cubic-bezier(0.7, 0, 0.2, 1),
+      visibility 0s 0.7s;
+
+    &.is-open {
+      clip-path: circle(150% at calc(100% - var(--container-padding) - 24px) calc(var(--header-height) / 2));
+      transition: clip-path 0.8s cubic-bezier(0.7, 0, 0.2, 1);
+    }
+  }
+
+  // Логотип и иконки — поверх открытого меню, светлые.
+  .is-menu-open .header {
+    color: #fff;
+
+    &::before {
+      opacity: 0;
+    }
+
+    .logo,
+    .header__actions {
+      position: relative;
+      z-index: z('menu') + 1;
+    }
+  }
+
+  .nav__list {
+    gap: space(3);
+    font-size: fluid(40px, 56px);
+    line-height: 1.1;
+
+    li {
+      opacity: 0;
+      transition:
+        opacity 0.3s,
+        transform 0.3s;
+      transform: translateY(40px);
+
+      .is-open & {
+        opacity: 1;
+        transition:
+          opacity 0.6s calc(0.25s + var(--i) * 0.07s),
+          transform 0.8s cubic-bezier(0.2, 0.8, 0.2, 1) calc(0.25s + var(--i) * 0.07s);
+        transform: none;
+      }
+    }
+  }
+
+  .nav__link {
+    display: inline-flex;
+    gap: space(3);
+    align-items: baseline;
+
+    &::after {
+      background: var(--color-blush);
+    }
+  }
+
+  .nav__index {
+    display: inline;
+    font-family: var(--font-base);
+    font-size: rem(13px);
+    font-weight: 700;
+    color: var(--color-blush);
+    letter-spacing: 0.1em;
+  }
+
+  .mobile-menu__extra {
+    display: grid;
+    gap: space(2);
+    justify-items: start;
+    margin-top: auto;
+    opacity: 0;
+    transition: opacity 0.3s;
+
+    .is-open & {
+      opacity: 1;
+      transition: opacity 0.6s 0.6s;
+    }
+
+    .btn {
+      margin-bottom: space(4);
+    }
+  }
+
+  .mobile-menu__phone {
+    font-family: var(--font-heading);
+    font-size: rem(28px);
+    color: inherit;
+    text-decoration: none;
+  }
+
+  .mobile-menu__hours {
+    font-size: rem(14px);
+    color: rgb(255 255 255 / 60%);
+  }
+
+  .mobile-menu__decor {
+    position: absolute;
+    inset: 0;
+    z-index: -1;
+    display: block;
+    overflow: hidden;
+    pointer-events: none;
+  }
+
+  .mobile-menu__bloom {
+    position: absolute;
+    width: rem(220px);
+    opacity: 0.9;
+    transition: transform 1.2s cubic-bezier(0.2, 0.8, 0.2, 1);
+    transform: scale(0.3) rotate(-120deg);
+
+    &:nth-child(1) {
+      right: -70px;
+      bottom: 18%;
+    }
+
+    &:nth-child(2) {
+      top: 38%;
+      right: 18%;
+      width: rem(90px);
+      opacity: 0.6;
+    }
+
+    &:nth-child(3) {
+      right: -30px;
+      bottom: -50px;
+      width: rem(150px);
+      opacity: 0.75;
+    }
+
+    .is-open & {
+      transform: none;
+    }
+
+    .bloom__outer {
+      animation: menu-bloom-spin 40s linear infinite;
+    }
+  }
+}
+
+@keyframes menu-bloom-spin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .mobile-menu,
+  .mobile-menu.is-open {
+    transition: none;
+  }
+
+  .mobile-menu__bloom .bloom__outer {
+    animation: none;
   }
 }
 

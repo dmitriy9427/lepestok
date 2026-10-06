@@ -5,10 +5,11 @@
 import { lazy, Suspense, useEffect } from 'react'
 import { Route, Routes, useLocation } from 'react-router'
 import { ScrollTrigger } from 'kit/js/core/gsap.js'
-import { useKit } from 'kit/react/index.js'
+import { useKit, useModule } from 'kit/react/index.js'
 import { Header } from './components/Header'
 import { Footer } from './components/Footer'
 import { Home } from './pages/Home'
+import blossoms from './modules/blossoms'
 
 const page = <T extends Record<string, unknown>>(load: () => Promise<T>, name: keyof T) =>
   lazy(() => load().then((m) => ({ default: m[name] as React.ComponentType })))
@@ -61,11 +62,14 @@ function useRouteReset() {
 
 export function App() {
   useRouteReset()
+  const ambient = useModule<HTMLCanvasElement>(blossoms)
   return (
     <>
       <a className="skip-link" href="#main">
         Перейти к содержимому
       </a>
+      {/* Фон всего сайта: плывущие цветы (fixed, под контентом). */}
+      <canvas className="ambient" ref={ambient} aria-hidden="true" />
       <Header />
       <Suspense fallback={<main id="main" className="page-loading" aria-busy="true" />}>
         <Routes>
