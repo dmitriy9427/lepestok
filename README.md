@@ -7,8 +7,10 @@
 
 ## Что есть
 
-- **Видео настоящего букета на первом экране** — вертикальный ролик в арке
-  (Pexels), без звука и в цикле; «меньше движения» — только постер.
+- **Первый экран «видео сквозь буквы»** — тёмный экран, в огромном слове
+  «Лепесток» играет видео букета; при прокрутке буквы растут и растворяются,
+  открывается полноэкранное видео с заголовком (`src/modules/heroReveal.ts`).
+  «Меньше движения» — сразу постер и текст, без интро.
 - **Конструктор букета** (`/builder`) — цветы, оттенки, упаковка и лента. У каждого
   оттенка каждого цветка — своё фото (33 шт.). «Ваш букет» — коллаж из этих фото
   с количеством. Цена с расшифровкой, бюджет («уложиться в 5 000 ₽» — подскажет, что
@@ -49,7 +51,7 @@ blender -b --python blender/bouquet.py   # → blender/bouquet.glb, см. blende
 | Доставка: интервалы, время сборки, цены      | `src/lib/delivery.ts`                                      |
 | Подписка: размеры, частота, скидки           | `src/lib/subscription.ts`                                  |
 | Фото цветов по оттенкам                      | `public/photos/flowers/<цветок>-<оттенок>.jpg` (300×300)   |
-| Видео первого экрана и постер                | `public/video/hero.mp4`, `hero-poster.jpg`                 |
+| Видео первого экрана и постер (1920×1080)    | `public/video/hero.mp4`, `hero-poster.jpg`                 |
 | Цвета, шрифты                                | `src/styles/_abstracts.scss` (+ импорт шрифтов `main.tsx`) |
 | Отправка заказа (сейчас имитация)            | `src/lib/api.ts` — замените тела функций на `fetch`        |
 | Проверка полей заказа                        | `src/forms/schemas.ts`                                     |
@@ -99,4 +101,4 @@ Temidayo Aladesuyi, Sephina Cornwall, Vlad Ioan, Gije Cho, Cup of Honey Lemon, S
 Pawel Konrad, Olya Prutskova, Shawn Nguyen, Cz Jen. Ссылки на букеты — поле `credit` в
 `src/data/bouquets.ts`.
 
-Видео первого экрана — Nadezhda Moryak / [Pexels](https://www.pexels.com/video/6184404/).
+Видео первого экрана — Naveen G / [Pexels](https://www.pexels.com/video/4286573/).

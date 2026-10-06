@@ -31,7 +31,7 @@ describe('App', () => {
   it('главная: заголовок, меню, видео букета с постером', async () => {
     await renderAt('/')
     expect(screen.getByRole('heading', { level: 1 }).textContent).toContain('Букеты')
-    expect(document.querySelector('.hero-video video')?.getAttribute('poster')).toBe('/video/hero-poster.jpg')
+    expect(document.querySelector('.hero__video')?.getAttribute('poster')).toBe('/video/hero-poster.jpg')
     expect(document.querySelector('.burger')?.getAttribute('aria-controls')).toBe('site-menu')
   })
 

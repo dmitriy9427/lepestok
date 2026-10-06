@@ -28,7 +28,14 @@ export function StemCollage({ composition, compact = false }: { composition: Com
             // key — оттенок+цветок: при смене количества плитка не пересоздаётся,
             // а новая «прилетает» с анимацией (CSS .collage__stem).
             <li className="collage__stem" key={`${s.flower}.${s.color}`} title={`${label} × ${s.count}`}>
-              <img src={flowerPhoto(s.flower, s.color)} alt="" width="300" height="300" loading="lazy" decoding="async" />
+              <img
+                src={flowerPhoto(s.flower, s.color)}
+                alt=""
+                width="300"
+                height="300"
+                loading="lazy"
+                decoding="async"
+              />
               <span className="collage__count" key={s.count}>
                 ×{s.count}
               </span>
@@ -41,7 +48,11 @@ export function StemCollage({ composition, compact = false }: { composition: Com
         <p className="collage__wrap">
           <span className="collage__swatch" style={{ background: wrap.color }} aria-hidden="true" />
           {wrap.name}
-          <span className="collage__swatch collage__swatch--ribbon" style={{ background: ribbon.color }} aria-hidden="true" />
+          <span
+            className="collage__swatch collage__swatch--ribbon"
+            style={{ background: ribbon.color }}
+            aria-hidden="true"
+          />
           {ribbon.name.toLowerCase()}
         </p>
       )}
@@ -50,8 +61,17 @@ export function StemCollage({ composition, compact = false }: { composition: Com
 }
 
 /** Превью строки корзины/избранного: фото готового букета или коллаж собранного. */
-export function ItemImage({ composition, bouquetId, alt = '' }: { composition: Composition; bouquetId?: string; alt?: string }) {
+export function ItemImage({
+  composition,
+  bouquetId,
+  alt = '',
+}: {
+  composition: Composition
+  bouquetId?: string
+  alt?: string
+}) {
   const photo = bouquetId ? bouquetById(bouquetId)?.photo : undefined
-  if (photo) return <img className="item-photo" src={photo} alt={alt} width="600" height="750" loading="lazy" decoding="async" />
+  if (photo)
+    return <img className="item-photo" src={photo} alt={alt} width="600" height="750" loading="lazy" decoding="async" />
   return <StemCollage composition={composition} compact />
 }

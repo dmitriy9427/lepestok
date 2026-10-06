@@ -4,8 +4,9 @@
 @use 'abstracts' as *;
 
 // ─── Коллаж «ваш букет» (StemCollage) ──────────────────────────────────────
-// Круглые фото цветов с количеством. Новая плитка «прилетает», счётчик
-// «подпрыгивает» при изменении (key={count} пересоздаёт его).
+// Круглые фото цветов с количеством. Появление/перестановку плиток анимирует
+// useFlip (в Builder и на главной); счётчик «подпрыгивает» (key={count}).
+// Своей CSS-анимации появления у плитки нет: она спорила бы с Flip за transform.
 .collage__stems {
   display: grid;
   grid-template-columns: repeat(auto-fill, minmax(rem(104px), 1fr));
@@ -21,7 +22,6 @@
   gap: space(2);
   justify-items: center;
   text-align: center;
-  animation: stem-in 0.5s var(--ease) backwards;
 
   img {
     width: 100%;
@@ -98,7 +98,6 @@
   .collage__stem {
     width: 46%;
     margin: -4% -2%;
-    animation: none;
   }
 
   .collage__count {
@@ -109,15 +108,7 @@
   }
 }
 
-@keyframes stem-in {
-  from {
-    opacity: 0;
-    transform: scale(0.6) translateY(12px);
-  }
-}
-
 @media (prefers-reduced-motion: reduce) {
-  .collage__stem,
   .collage__count {
     animation: none;
   }
@@ -275,15 +266,20 @@
 }
 
 .gallery-3d__bar {
-  display: flex;
-  gap: space(6);
+  // Стрелки — в колонках фиксированной ширины, подпись — в своей: меняется
+  // название слайда, а стрелки стоят на месте.
+  display: grid;
+  grid-template-columns: rem(52px) minmax(0, rem(420px)) rem(52px);
+  gap: space(4);
   align-items: center;
   justify-content: center;
   margin-top: space(6);
 }
 
 .gallery-3d__caption {
-  min-width: min(24ch, 50vw);
+  display: grid;
+  gap: space(1);
+  min-width: 0;
   text-align: center;
 
   .infinite__title {

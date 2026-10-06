@@ -215,8 +215,15 @@
 }
 
 .checkout-form {
-  display: grid;
+  // Шаги разной высоты: форма держит высоту самого высокого (Доставка),
+  // кнопки «Назад/Далее» прижаты к низу и не прыгают при переходе.
+  display: flex;
+  flex-direction: column;
   gap: space(5);
+
+  @include up('lg') {
+    min-height: rem(640px);
+  }
 
   > fieldset {
     display: grid;
@@ -251,6 +258,7 @@
 
 .checkout-form__nav {
   display: flex;
+  margin-top: auto;
   gap: space(3);
   justify-content: flex-end;
   padding-top: space(4);
@@ -369,6 +377,10 @@
   .muted {
     color: rgb(255 255 255 / 50%);
   }
+}
+
+.subscription__total {
+  font-variant-numeric: tabular-nums;
 }
 
 .subscription__price {

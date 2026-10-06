@@ -3,47 +3,175 @@
 // ═══════════════════════════════════════════════════════════════════════════
 @use 'abstracts' as *;
 
-// ─── Первый экран ──────────────────────────────────────────────────────────
+$hero-dark: #140b10;
+
+// ─── Первый экран: видео сквозь буквы ──────────────────────────────────────
+// Логика и «почему так» — src/modules/heroReveal.ts. Сцена 100svh на всю
+// ширину, шапка лежит поверх (hero подтянут под неё отрицательным отступом).
 .hero {
   position: relative;
-  overflow: hidden;
-  isolation: isolate;
-  background:
-    radial-gradient(45% 55% at 75% 45%, rgb(244 217 212 / 90%), transparent 70%),
-    radial-gradient(30% 40% at 10% 90%, rgb(169 187 163 / 35%), transparent 70%), var(--color-bg);
+  margin-top: calc(-1 * var(--header-height));
+  color: #fff;
+  background: $hero-dark;
+
+  // Интро включает JS (не «меньше движения»): секция вдвое выше экрана,
+  // сцена прилипает — прокрутка «проматывает» анимацию.
+  &.is-intro {
+    height: 200svh;
+  }
 }
 
-// Лепестки — на весь экран, под текстом, мышь не перехватывают.
-.petals {
+.hero__stage {
+  position: sticky;
+  top: 0;
+  display: grid;
+  align-items: end;
+  height: 100svh;
+  min-height: rem(560px);
+  overflow: hidden;
+  isolation: isolate;
+}
+
+.hero__video {
+  position: absolute;
+  inset: 0;
+  z-index: -2;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  object-position: 65% 50%;
+}
+
+// Затемнение слева-снизу — под текстом; справа видео остаётся ярким.
+// В интро скрыто (иначе буквы слева тусклые), проявляется вместе с текстом.
+.hero__shade {
   position: absolute;
   inset: 0;
   z-index: -1;
+  pointer-events: none;
+  background:
+    linear-gradient(90deg, rgb(18 10 14 / 78%) 0%, rgb(18 10 14 / 35%) 45%, transparent 70%),
+    linear-gradient(0deg, rgb(18 10 14 / 70%), transparent 45%);
+}
+
+.petals {
+  position: absolute;
+  inset: 0;
+  z-index: 1;
   width: 100%;
   height: 100%;
   pointer-events: none;
 }
 
-.hero__grid {
-  display: grid;
-  gap: space(6);
-  align-items: center;
-  min-height: calc(100svh - var(--header-height));
-  padding-block: space(8) space(12);
+// Тёмный слой с белым словом: multiply «вырезает» буквы — в них видно видео.
+.hero__mask {
+  position: absolute;
+  inset: 0;
+  z-index: 2;
+  display: none;
+  place-items: center;
+  pointer-events: none;
+  background: $hero-dark;
+  mix-blend-mode: multiply;
 
-  @include up('lg') {
-    grid-template-columns: 1.05fr 1fr;
+  .is-intro & {
+    display: grid;
   }
 }
 
-.hero__text {
+.hero__word {
+  font-family: var(--font-heading);
+  font-size: min(23vw, 56svh);
+  font-weight: 700;
+  line-height: 0.8;
+  color: #fff;
+  letter-spacing: -0.04em;
+  white-space: nowrap;
+  transform-origin: 50% 55%;
+  will-change: transform;
+}
+
+.hero__hint {
+  position: absolute;
+  bottom: space(8);
+  left: 50%;
+  z-index: 3;
+  display: none;
+  margin: 0;
+  font-size: rem(12px);
+  font-weight: 700;
+  color: rgb(255 255 255 / 75%);
+  text-transform: uppercase;
+  letter-spacing: 0.3em;
+  translate: -50% 0;
+
+  // Линия «капает» вниз — подсказка прокрутить.
+  &::after {
+    display: block;
+    width: 1px;
+    height: rem(48px);
+    margin: space(3) auto 0;
+    content: '';
+    background: currentcolor;
+    transform-origin: top;
+    animation: hero-drip 1.8s var(--ease) infinite;
+  }
+
+  .is-intro & {
+    display: block;
+  }
+}
+
+@keyframes hero-drip {
+  0% {
+    transform: scaleY(0);
+  }
+
+  50% {
+    transform: scaleY(1);
+    transform-origin: top;
+  }
+
+  51% {
+    transform-origin: bottom;
+  }
+
+  100% {
+    transform: scaleY(0);
+    transform-origin: bottom;
+  }
+}
+
+.hero__content {
+  position: relative;
+  z-index: 3;
   display: grid;
   gap: space(6);
   justify-items: start;
+  padding-block: calc(var(--header-height) + #{space(8)}) fluid(48px, 96px);
+
+  .lead {
+    color: rgb(255 255 255 / 82%);
+  }
 }
 
 .hero__title {
-  font-size: fluid(44px, 84px);
-  line-height: 0.98;
+  max-width: 13ch;
+  font-size: fluid(48px, 112px);
+  line-height: 0.92;
+  text-wrap: balance;
+}
+
+// «Стеклянная» вторая кнопка — поверх видео.
+.btn--glass {
+  color: #fff;
+  background: rgb(255 255 255 / 12%);
+  border: 1px solid rgb(255 255 255 / 35%);
+  backdrop-filter: blur(10px);
+
+  @include hover {
+    background: rgb(255 255 255 / 22%);
+  }
 }
 
 .hero__perks {
@@ -53,69 +181,25 @@
   flex-wrap: wrap;
   gap: space(2) space(5);
   font-size: rem(14px);
-  color: var(--color-muted);
+  color: rgb(255 255 255 / 75%);
 
   li::before {
     margin-right: space(2);
-    color: var(--color-accent);
+    color: var(--color-blush);
     content: '✿';
   }
 }
 
-// Видео букета: вертикальный кадр в арке, сбоку — плашка.
-.hero-video {
-  position: relative;
-  margin: 0;
+// Шапка над видео (главная, пока не прокрутили): прозрачная, светлая.
+.header:has(~ main .hero):not(.is-scrolled) {
+  color: #fff;
 
-  video,
-  img {
-    display: block;
-    width: 100%;
-    aspect-ratio: 9 / 13;
-    object-fit: cover;
-    background: var(--color-surface);
-    border-radius: 999px 999px radius('lg') radius('lg');
-    box-shadow: 0 40px 80px -30px rgb(120 60 70 / 45%);
-
-    // Телефон: кадр ниже, чтобы заголовок был виден на первом экране.
-    @include down('lg') {
-      aspect-ratio: 4 / 5;
-    }
+  &::before {
+    opacity: 0;
   }
-}
 
-.hero-video__badge {
-  position: absolute;
-  bottom: 8%;
-  left: -8%;
-  display: grid;
-  gap: 2px;
-  padding: space(3) space(5);
-  font-size: rem(13px);
-  color: var(--color-muted);
-  background: var(--color-paper);
-  border-radius: radius('md');
-  box-shadow: var(--shadow-lg);
-
-  strong {
-    font-family: var(--font-heading);
-    font-size: rem(20px);
+  .mobile-menu {
     color: var(--color-text);
-  }
-
-  @include down('lg') {
-    left: 4%;
-  }
-}
-
-.hero__art {
-  width: 100%; // элемент grid с margin: auto иначе сжимается по содержимому
-  max-width: rem(440px);
-  margin-inline: auto;
-
-  @include down('lg') {
-    order: -1;
-    max-width: rem(300px);
   }
 }
 
@@ -190,7 +274,43 @@
 }
 
 .builder-promo__art {
+  // Коллаж меняется каждые 2 с (1…5 плиток). Размер карточки ЖЁСТКИЙ, а не
+  // min-height: высота задана, сетка — 3 колонки с рядами фиксированной
+  // высоты, строка «упаковка» прижата к низу. Плитки перестраиваются внутри
+  // (Flip), а карточка, колонка с текстом и страница не двигаются.
+  display: flex;
+  flex-direction: column;
   width: 100%;
+  height: clamp(rem(460px), 70dvh, rem(540px));
+  overflow: hidden;
+
+  > div,
+  .collage {
+    display: flex;
+    flex: 1;
+    flex-direction: column;
+    min-height: 0;
+  }
+
+  .collage__stems {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    grid-auto-rows: rem(170px);
+    align-content: start;
+  }
+
+  .collage__name {
+    display: -webkit-box;
+    overflow: hidden;
+    -webkit-line-clamp: 2;
+    -webkit-box-orient: vertical;
+  }
+
+  .collage__wrap {
+    flex-wrap: nowrap;
+    margin-top: auto;
+    white-space: nowrap;
+  }
+
   max-width: rem(460px);
   padding: space(6);
   margin-inline: auto;

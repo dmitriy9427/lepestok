@@ -13,6 +13,7 @@
 import { useEffect, useMemo, useState } from 'react'
 import { Link, useSearchParams } from 'react-router'
 import { toast } from 'kit/js/modules/toast/index.js'
+import { Expand, useFlip } from 'kit/react/index.js'
 import { plural } from 'kit/js/form/schema.js'
 import { BOUQUETS } from '../data/bouquets'
 import { COLORS, FLOWERS, RIBBONS, WRAPS, flowerPhoto, type ColorId, type Flower, type FlowerId } from '../data/flowers'
@@ -41,7 +42,18 @@ const PRESETS = ['utro-v-provanse', 'persikovyy-zakat', 'lavandovyy-son'].map((i
 
 export function Builder() {
   const [params, setParams] = useSearchParams()
-  const [composition, setComposition] = useState<Composition>(() => fromParams(params, EMPTY))
+  const [composition, setCompositionState] = useState<Composition>(() => fromParams(params, EMPTY))
+  const stemsKey = composition.stems.map((s) => `${s.flower}.${s.color}`).join()
+
+  // Без «плясок»: коллаж и список состава плавно перестраиваются (useFlip).
+  // Снимок «до» — в set(), перед каждым изменением состава.
+  const [collageRef, captureCollage] = useFlip<HTMLDivElement>(stemsKey, { selector: '.collage__stem' })
+  const [listRef, captureList] = useFlip<HTMLUListElement>(stemsKey)
+  const setComposition = (next: Composition | ((c: Composition) => Composition)) => {
+    captureCollage()
+    captureList()
+    setCompositionState(next)
+  }
   const [budget, setBudget] = useState('')
 
   // Состав → адрес. Пустой букет — чистый адрес /builder.
@@ -60,6 +72,12 @@ export function Builder() {
     () => (budgetValue > 0 && price.total > budgetValue ? fitBudget(composition, budgetValue) : null),
     [budgetValue, composition, price.total],
   )
+
+  // Последняя подсказка остаётся в DOM, пока Expand сворачивается — иначе
+  // блок схлопнулся бы рывком. (Хранение значения прошлого рендера — через
+  // setState во время рендера, как советует документация React.)
+  const [shownFit, setShownFit] = useState(fit)
+  if (fit && fit !== shownFit) setShownFit(fit)
 
   const change = (flower: FlowerId, color: ColorId, delta: number) => {
     if (delta > 0 && count >= MAX_STEMS) {
@@ -118,7 +136,9 @@ export function Builder() {
                 </div>
               </div>
             ) : (
-              <StemCollage composition={composition} />
+              <div ref={collageRef}>
+                <StemCollage composition={composition} />
+              </div>
             )}
             <p className="builder__count" aria-live="polite">
               Цветов в букете: {count} из {MAX_STEMS}
@@ -169,7 +189,7 @@ export function Builder() {
               {empty ? (
                 <p className="muted">Пока пусто.</p>
               ) : (
-                <ul className="summary__stems">
+                <ul className="summary__stems" ref={listRef}>
                   {composition.stems.map((s) => (
                     <li key={`${s.flower}.${s.color}`}>
                       <span>{stemLabel(s)}</span>
@@ -214,26 +234,33 @@ export function Builder() {
                   onChange={(e) => setBudget(e.currentTarget.value)}
                 />
               </label>
-              {fit && !empty && (
-                <div className="budget__hint" role="status">
-                  {fit.fits ? (
-                    <>
+              {/* Подсказка раскрывается по высоте (Expand), а не появляется рывком. */}
+              <Expand open={!!fit && !empty}>
+                {shownFit && (
+                  <div className="budget__hint" role="status">
+                    {shownFit.fits ? (
+                      <>
+                        <p>
+                          Чтобы уложиться в {formatPrice(budgetValue)}, уберите:{' '}
+                          {shownFit.removed.map((r) => stemLabel(r)).join(', ')}.
+                        </p>
+                        <button
+                          className="btn btn--sm"
+                          type="button"
+                          onClick={() => setComposition(shownFit.composition)}
+                        >
+                          Убрать и уложиться
+                        </button>
+                      </>
+                    ) : (
                       <p>
-                        Чтобы уложиться в {formatPrice(budgetValue)}, уберите:{' '}
-                        {fit.removed.map((r) => stemLabel(r)).join(', ')}.
+                        Даже по одному цветку каждого вида выходит {formatPrice(priceOf(shownFit.composition))} — больше
+                        бюджета. Уберите один из видов цветов или выберите упаковку подешевле.
                       </p>
-                      <button className="btn btn--sm" type="button" onClick={() => setComposition(fit.composition)}>
-                        Убрать и уложиться
-                      </button>
-                    </>
-                  ) : (
-                    <p>
-                      Даже по одному цветку каждого вида выходит {formatPrice(priceOf(fit.composition))} — больше
-                      бюджета. Уберите один из видов цветов или выберите упаковку подешевле.
-                    </p>
-                  )}
-                </div>
-              )}
+                    )}
+                  </div>
+                )}
+              </Expand>
 
               <div className="summary__actions">
                 <button className="btn btn--lg" type="button" disabled={empty} onClick={addToCart}>

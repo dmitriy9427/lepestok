@@ -49,12 +49,46 @@
 }
 
 .filters__count {
+  // «Загружаем…» → «12 букетов»: ширина не меняется — соседи не прыгают.
+  min-width: 11ch;
   margin-right: auto;
   font-weight: 700;
+  font-variant-numeric: tabular-nums;
+}
+
+// Кнопка всегда в разметке; без фильтров — невидима, но место держит.
+.filters__reset[aria-hidden='true'] {
+  visibility: hidden;
+}
+
+// Элементы сетки по умолчанию min-width: auto — лента чипсов растянула бы колонку
+// и наехала на соседнюю. Ограничиваем шириной колонки.
+.filters__group > *,
+.filters .select {
+  min-width: 0;
+  max-width: 100%;
+}
+
+// Выбранные цветы — чипсы в одну строку с прокруткой: панель не растёт по высоте.
+.filters .select--multiple .select__control {
+  @include scrollbar-hidden;
+
+  flex-wrap: nowrap;
+  overflow-x: auto;
+
+  .select__chip {
+    flex: none;
+  }
 }
 
 .filters__sort {
   width: rem(250px);
+}
+
+.catalog__results {
+  // Скелетон → ошибка / «пусто» → карточки: высота области не скачет,
+  // футер не дёргается. Сетке тоже — Flip с absolute выносит карточки из потока.
+  min-height: 70svh;
 }
 
 .catalog__grid {
@@ -209,6 +243,9 @@
 }
 
 .builder__stage {
+  // Резерв высоты: коллаж растёт с каждым цветком — без min-height колонка
+  // «дышала» бы на каждое нажатие «+».
+  min-height: rem(420px);
   position: sticky;
   top: calc(var(--header-height) + #{space(3)});
   z-index: 2;
@@ -232,6 +269,7 @@
   // Вместо этого — отступ сверху под шапку (когда она видна).
   @include down('md') {
     top: 0;
+    min-height: 0;
     padding-top: calc(var(--header-height) + #{space(2)});
     margin-inline: calc(-1 * var(--container-padding));
     border-radius: 0;
@@ -261,6 +299,11 @@
     .collage__stem {
       flex: none;
       width: rem(68px);
+    }
+
+    // Лента фиксированной высоты — от числа цветов не зависит.
+    .collage__stems {
+      height: rem(80px);
     }
 
     .collage__count {
@@ -482,4 +525,15 @@
 .summary__actions {
   display: grid;
   gap: space(3);
+
+  // «В корзину · 5 340 ₽» — цифры одной ширины, кнопка не меняет размер.
+  .btn--lg {
+    font-variant-numeric: tabular-nums;
+  }
+}
+
+.summary__price dd,
+.summary__total dd {
+  min-width: 9ch;
+  text-align: right;
 }

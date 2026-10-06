@@ -3,6 +3,7 @@
  * Цены пересчитываются из состава при каждом показе (lib/cart.ts).
  */
 import { Link } from 'react-router'
+import { useFlip } from 'kit/react/index.js'
 import { plural } from 'kit/js/form/schema.js'
 import { CARD_PRICE } from '../data/flowers'
 import { SIZE_LABEL, formatPrice, stemLabel, toParams } from '../lib/bouquet'
@@ -13,6 +14,8 @@ import { QtyStepper } from '../components/QtyStepper'
 
 export function Cart() {
   const items = cart.use()
+  // Удалили строку — остальные плавно поднимаются на её место.
+  const [listRef, captureList] = useFlip<HTMLUListElement>(items.map((i) => i.id).join())
   const total = cartTotal(items)
   const count = cartCount(items)
 
@@ -42,9 +45,9 @@ export function Cart() {
       <div className="container">
         <h1 className="section-title">Корзина</h1>
         <div className="checkout__grid">
-          <ul className="cart-list">
+          <ul className="cart-list" ref={listRef}>
             {items.map((item) => (
-              <CartRow key={item.id} item={item} />
+              <CartRow key={item.id} item={item} onRemove={captureList} />
             ))}
           </ul>
           <aside className="order-summary">
@@ -70,7 +73,7 @@ export function Cart() {
   )
 }
 
-function CartRow({ item }: { item: CartItem }) {
+function CartRow({ item, onRemove }: { item: CartItem; onRemove: () => void }) {
   const href = item.bouquetId
     ? `/bouquet/${item.bouquetId}${item.size && item.size !== 'M' ? `?size=${item.size}` : ''}`
     : `/builder?${toParams(item.composition)}`
@@ -104,7 +107,10 @@ function CartRow({ item }: { item: CartItem }) {
         className="cart-item__remove"
         type="button"
         aria-label={`Удалить «${item.title}»`}
-        onClick={() => cart.set((list) => removeItem(list, item.id))}
+        onClick={() => {
+          onRemove()
+          cart.set((list) => removeItem(list, item.id))
+        }}
       >
         ×
       </button>

@@ -3,6 +3,7 @@
  * Хранится в браузере (lib/cart.ts → favorites).
  */
 import { Link } from 'react-router'
+import { useFlip } from 'kit/react/index.js'
 import { toast } from 'kit/js/modules/toast/index.js'
 import { bouquetById } from '../data/bouquets'
 import { formatPrice, fromCode, priceOf, stemLabel, type Composition } from '../lib/bouquet'
@@ -14,6 +15,14 @@ const EMPTY: Composition = { stems: [], wrap: 'kraft', ribbon: 'satin-blush' }
 
 export function Favorites() {
   const keys = favorites.use()
+  // Убрали из избранного — соседние карточки плавно занимают место.
+  const [customRef, captureCustom] = useFlip<HTMLDivElement>(keys.join(), { absolute: true })
+  const [readyRef, captureReady] = useFlip<HTMLDivElement>(keys.join(), { absolute: true })
+  const remove = (key: string) => {
+    captureCustom()
+    captureReady()
+    toggleFavorite(key)
+  }
   const ready = keys.filter((k) => k.startsWith('b:')).flatMap((k) => bouquetById(k.slice(2)) ?? [])
   const custom = keys
     .filter((k) => k.startsWith('c:'))
@@ -39,7 +48,7 @@ export function Favorites() {
         {custom.length > 0 && (
           <>
             <h2 className="h3 favorites__heading">Собранные вами</h2>
-            <div className="catalog__grid">
+            <div className="catalog__grid" ref={customRef}>
               {custom.map(({ key, code, composition }) => (
                 <article className="bouquet-card" key={key}>
                   <Link className="bouquet-card__link" to={`/builder?${code}`} aria-label="Открыть в конструкторе" />
@@ -51,7 +60,7 @@ export function Favorites() {
                     type="button"
                     aria-pressed="true"
                     aria-label="Убрать из избранного"
-                    onClick={() => toggleFavorite(key)}
+                    onClick={() => remove(key)}
                   >
                     <svg viewBox="0 0 24 24" aria-hidden="true">
                       <path d="M12 20s-7-4.4-9.2-8.6C1.2 8.3 3 4.5 6.6 4.5c2.1 0 3.6 1.2 4.4 2.6.8-1.4 2.3-2.6 4.4-2.6 3.6 0 5.4 3.8 3.8 6.9C19 15.6 12 20 12 20z" />
@@ -81,7 +90,7 @@ export function Favorites() {
         {ready.length > 0 && (
           <>
             {custom.length > 0 && <h2 className="h3 favorites__heading">Из каталога</h2>}
-            <div className="catalog__grid">
+            <div className="catalog__grid" ref={readyRef}>
               {ready.map((b) => (
                 <BouquetCard key={b.id} bouquet={b} />
               ))}

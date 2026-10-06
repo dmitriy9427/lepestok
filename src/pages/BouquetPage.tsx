@@ -7,7 +7,7 @@
 import { useEffect, useMemo, useState } from 'react'
 import { Link, useParams, useSearchParams } from 'react-router'
 import { toast } from 'kit/js/modules/toast/index.js'
-import { useModule } from 'kit/react/index.js'
+import { Expand, useModule } from 'kit/react/index.js'
 import charCounter from 'kit/js/modules/char-counter/index.js'
 import { BOUQUETS, OCCASIONS, bouquetById } from '../data/bouquets'
 import { CARD_PRICE, ribbonById, wrapById } from '../data/flowers'
@@ -131,7 +131,10 @@ function BouquetView({ id }: { id: string }) {
                   <input type="checkbox" checked={withCard} onChange={(e) => setWithCard(e.currentTarget.checked)} />
                   <span>Добавить открытку · {formatPrice(CARD_PRICE)}</span>
                 </label>
-                {withCard && <Greeting value={card} onChange={setCard} />}
+                {/* Раскрывается плавно (Expand), поле всегда в DOM — счётчик символов запущен один раз. */}
+                <Expand open={withCard}>
+                  <Greeting value={card} onChange={setCard} />
+                </Expand>
               </div>
 
               <div className="product__buy">
@@ -166,9 +169,8 @@ function BouquetView({ id }: { id: string }) {
 }
 
 /**
- * Текст открытки с предпросмотром. Отдельный компонент: поле появляется по
- * галочке, а модуль char-counter (счётчик «12 / 200») запускается при
- * монтировании своего элемента.
+ * Текст открытки с предпросмотром (внутри Expand — показывается по галочке).
+ * Модуль char-counter (счётчик «12 / 200») — через useModule.
  */
 function Greeting({ value, onChange }: { value: string; onChange: (v: string) => void }) {
   const counter = useModule<HTMLTextAreaElement>(charCounter)

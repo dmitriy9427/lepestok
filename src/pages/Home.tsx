@@ -1,19 +1,19 @@
 /**
- * Главная: первый экран с видео букета и лепестками, бесконечная
+ * Главная: первый экран «видео сквозь буквы» с лепестками, бесконечная
  * галерея, поводы, промо конструктора, как мы работаем, отзывы, доставка.
  */
 import { useEffect, useState } from 'react'
 import { Link } from 'react-router'
-import { useModule, useReducedMotion } from 'kit/react/index.js'
+import { useFlip, useModule, useReducedMotion } from 'kit/react/index.js'
 import accordion from 'kit/js/modules/accordion/index.js'
 import swiper from 'kit/js/modules/swiper/index.js'
-import splitText from 'kit/js/modules/split-text/index.js'
 import reveal from 'kit/js/modules/reveal/index.js'
 import { BOUQUETS, OCCASIONS, type Occasion } from '../data/bouquets'
 import { FAQ, REVIEWS, STEPS } from '../data/content'
 import type { Composition } from '../lib/bouquet'
 import { ASSEMBLY_HOURS } from '../lib/delivery'
 import petals from '../modules/petals'
+import heroReveal from '../modules/heroReveal'
 import { StemCollage } from '../components/Collage'
 import { Gallery } from '../components/Gallery'
 
@@ -61,94 +61,84 @@ const DEMO: Composition[] = [
 ]
 
 const ACCORDION = { multiple: false }
-const SPLIT = { type: 'lines' }
 const PETALS = { count: 26 }
-
-/**
- * Видео настоящего букета (Pexels). Без звука и с playsInline — иначе
- * браузеры не запускают автовоспроизведение (iOS открыл бы видео на весь экран).
- * «Меньше движения» — только постер; preload="metadata" — не качать 4 МБ
- * раньше времени, постер виден сразу.
- */
-function HeroVideo() {
-  const reduced = useReducedMotion()
-  return (
-    <figure className="hero-video">
-      {reduced ? (
-        <img
-          src="/video/hero-poster.jpg"
-          alt="Букет из пионов, ранункулюсов и эустомы в крафтовой бумаге"
-          width="720"
-          height="1280"
-        />
-      ) : (
-        <video
-          src="/video/hero.mp4"
-          poster="/video/hero-poster.jpg"
-          autoPlay
-          muted
-          loop
-          playsInline
-          preload="metadata"
-          aria-label="Букет из пионов, ранункулюсов и эустомы в крафтовой бумаге"
-        />
-      )}
-      <figcaption className="hero-video__badge">
-        <strong>Собираем сегодня</strong>
-        <span>фото букета — до отправки</span>
-      </figcaption>
-    </figure>
-  )
-}
 
 function DemoBouquet() {
   const reduced = useReducedMotion()
   const [step, setStep] = useState(DEMO.length - 1)
+  // Плитки плавно перестраиваются; высота блока зарезервирована в CSS
+  // (.builder-promo__art min-height) — страница под ним не дёргается.
+  const [collageRef, captureCollage] = useFlip<HTMLDivElement>(step, { selector: '.collage__stem' })
   useEffect(() => {
     if (reduced) return undefined
-    const timer = window.setInterval(() => setStep((s) => (s + 1) % DEMO.length), 1800)
+    const timer = window.setInterval(() => {
+      captureCollage()
+      setStep((s) => (s + 1) % DEMO.length)
+    }, 2200)
     return () => window.clearInterval(timer)
-  }, [reduced])
-  return <StemCollage composition={DEMO[step]} />
+  }, [reduced, captureCollage])
+  return (
+    <div ref={collageRef}>
+      <StemCollage composition={DEMO[step]} />
+    </div>
+  )
 }
 
 export function Home() {
+  const reduced = useReducedMotion()
   const main = useModule<HTMLElement>(reveal)
   const petalsRef = useModule<HTMLCanvasElement>(petals, PETALS)
-  const title = useModule<HTMLHeadingElement>(splitText, SPLIT)
+  const hero = useModule<HTMLElement>(heroReveal)
   const faq = useModule<HTMLDivElement>(accordion, ACCORDION)
   const reviews = useModule<HTMLDivElement>(swiper)
 
   return (
     <main id="main" ref={main}>
-      <section className="hero">
-        <canvas className="petals" ref={petalsRef} aria-hidden="true" />
-        <div className="container hero__grid">
-          <div className="hero__text">
-            <p className="eyebrow">Цветочная мастерская</p>
-            <h1 className="hero__title" ref={title}>
+      <section className="hero" ref={hero}>
+        <div className="hero__stage">
+          {/* Видео Pexels (Naveen G). muted + playsInline — иначе нет автозапуска
+              (iOS открыл бы на весь экран); играет только пока hero на экране. */}
+          <video
+            className="hero__video"
+            src="/video/hero.mp4"
+            poster="/video/hero-poster.jpg"
+            autoPlay={!reduced}
+            muted
+            loop
+            playsInline
+            preload="auto"
+            aria-hidden="true"
+          />
+          <div className="hero__shade" />
+          <canvas className="petals" ref={petalsRef} aria-hidden="true" />
+          <div className="hero__mask" aria-hidden="true">
+            <span className="hero__word">Лепесток</span>
+          </div>
+          <p className="hero__hint" aria-hidden="true">
+            Листайте
+          </p>
+          <div className="container hero__content">
+            <p className="eyebrow eyebrow--light">Цветочная мастерская · Москва</p>
+            <h1 className="hero__title">
               Букеты, которые собирают для&nbsp;вас — и&nbsp;вместе с&nbsp;вами
             </h1>
-            <p className="lead hero__lead" data-reveal>
+            <p className="lead hero__lead">
               Выберите готовый букет или соберите свой в конструкторе: цена считается сразу. Фото букета пришлём до
               отправки.
             </p>
-            <div className="cluster" data-reveal>
-              <Link className="btn btn--lg" to="/catalog">
+            <div className="cluster">
+              <Link className="btn btn--lg btn--light" to="/catalog">
                 Выбрать букет
               </Link>
-              <Link className="btn btn--lg btn--ghost" to="/builder">
+              <Link className="btn btn--lg btn--glass" to="/builder">
                 Собрать свой
               </Link>
             </div>
-            <ul className="hero__perks" data-reveal>
+            <ul className="hero__perks">
               <li>Фото перед отправкой</li>
               <li>Свежесть 7 дней</li>
               <li>Доставка за {ASSEMBLY_HOURS} часа</li>
             </ul>
-          </div>
-          <div className="hero__art">
-            <HeroVideo />
           </div>
         </div>
       </section>

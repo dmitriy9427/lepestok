@@ -95,7 +95,9 @@ describe('состав и цена', () => {
 
 describe('фото', () => {
   it('у каждого оттенка каждого цветка есть фото (иначе в конструкторе пустой кружок)', () => {
-    const missing = FLOWERS.flatMap((f) => f.colors.map((c) => flowerPhoto(f.id, c))).filter((path) => !existsSync(`public${path}`))
+    const missing = FLOWERS.flatMap((f) => f.colors.map((c) => flowerPhoto(f.id, c))).filter(
+      (path) => !existsSync(`public${path}`),
+    )
     expect(missing).toEqual([])
   })
 

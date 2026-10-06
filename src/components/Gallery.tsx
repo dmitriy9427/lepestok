@@ -65,6 +65,7 @@ export function Gallery({ bouquets }: { bouquets: Bouquet[] }) {
         <button className="round-btn" type="button" data-infinite-prev aria-label="Предыдущий букет">
           ←
         </button>
+        {/* Подпись меняется каждый слайд: ячейка фиксированной ширины, одна строка — стрелки не двигаются. */}
         <div className="gallery-3d__caption">
           <p className="infinite__title" data-infinite-title />
           <Link className="gallery-3d__open" to={`/bouquet/${current.id}`}>

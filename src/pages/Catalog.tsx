@@ -6,18 +6,16 @@
  * Данные — «с сервера» (lib/api.ts): загрузка со скелетонами, ошибка с
  * «Повторить» (проверить: /catalog?fail), пустой результат со сбросом.
  *
- * Перестановка карточек при фильтрации — GSAP Flip: запоминаем, где карточки
- * были ДО изменения, и после рендера плавно двигаем их с прежних мест.
+ * Перестановка карточек при фильтрации — useFlip кита: в update() снимок
+ * «где карточки сейчас», после рендера они плавно едут с прежних мест.
  *
  * Ползунок цены и выбор цветов — модули кита (range, select). Они управляют
  * своими полями сами (неконтролируемые), поэтому при смене адреса «снаружи»
  * (сброс, «Назад») значения в них выставляются эффектами ниже.
  */
-import { useEffect, useLayoutEffect, useMemo, useRef } from 'react'
+import { useEffect, useMemo, useRef } from 'react'
 import { useSearchParams } from 'react-router'
-import { Flip } from 'gsap/Flip'
-import { gsap } from 'kit/js/core/gsap.js'
-import { useModule, useReducedMotion } from 'kit/react/index.js'
+import { useFlip, useModule } from 'kit/react/index.js'
 import range from 'kit/js/modules/range/index.js'
 import select from 'kit/js/modules/select/index.js'
 import { OCCASIONS, type Occasion } from '../data/bouquets'
@@ -39,8 +37,6 @@ import { fetchBouquets } from '../lib/api'
 import { useAsync } from '../hooks/useAsync'
 import { BouquetCard } from '../components/BouquetCard'
 
-gsap.registerPlugin(Flip)
-
 const RANGE = { format: 'price' }
 const FLOWER_SELECT = { search: true, placeholder: 'Любые цветы' }
 const SORT_SELECT = {}
@@ -56,29 +52,16 @@ export function Catalog() {
   const { status, data, error, retry } = useAsync((signal) => fetchBouquets(signal), [])
   const bounds = useMemo<[number, number]>(() => (data ? priceBounds(data) : [0, 0]), [data])
   const list = useMemo(() => (data ? applyFilters(data, filters) : []), [data, filters])
-  const reduced = useReducedMotion()
-
-  const grid = useRef<HTMLDivElement>(null)
-  const flipState = useRef<Flip.FlipState | null>(null)
+  // absolute — карточки меняют ряды; у сетки min-height, чтобы не «схлопывалась».
+  const [gridRef, captureGrid] = useFlip<HTMLDivElement>(list.map((b) => b.id).join(), {
+    absolute: true,
+    duration: 0.55,
+  })
 
   const update = (patch: Partial<Filters>) => {
-    if (grid.current && !reduced) flipState.current = Flip.getState(grid.current.querySelectorAll('.bouquet-card'))
+    captureGrid()
     setParams(new URLSearchParams(toSearch({ ...filters, ...patch }, bounds)), { preventScrollReset: true })
   }
-
-  useLayoutEffect(() => {
-    const state = flipState.current
-    if (!state || !grid.current) return
-    flipState.current = null
-    Flip.from(state, {
-      targets: grid.current.querySelectorAll('.bouquet-card'),
-      duration: 0.55,
-      ease: 'power3.inOut',
-      absolute: true,
-      onEnter: (els) =>
-        gsap.fromTo(els, { opacity: 0, scale: 0.9 }, { opacity: 1, scale: 1, duration: 0.45, delay: 0.15 }),
-    })
-  }, [list])
 
   // ─── Выбор цветов (модуль select, multiple) ────────────────────────────────
   const flowersApi = useRef<SelectApi | null>(null)
@@ -185,11 +168,16 @@ export function Catalog() {
                   ? 'Загружаем…'
                   : '—'}
             </p>
-            {isFiltered(filters) && (
-              <button className="btn btn--sm btn--ghost" type="button" onClick={reset}>
-                Сбросить фильтры
-              </button>
-            )}
+            {/* Кнопка всегда в разметке: прячется visibility — место остаётся, сортировка не прыгает. */}
+            <button
+              className="btn btn--sm btn--ghost filters__reset"
+              type="button"
+              onClick={reset}
+              disabled={!isFiltered(filters)}
+              aria-hidden={!isFiltered(filters)}
+            >
+              Сбросить фильтры
+            </button>
             <label className="filters__sort">
               <span className="visually-hidden">Сортировка</span>
               <select
@@ -207,41 +195,44 @@ export function Catalog() {
           </div>
         </div>
 
-        {status === 'loading' && (
-          <div className="catalog__grid" aria-busy="true">
-            {Array.from({ length: 6 }, (_, i) => (
-              <div className="bouquet-card bouquet-card--skeleton" key={i} />
-            ))}
-          </div>
-        )}
+        {/* Общая область результатов с min-height: скелетон → ошибка/пусто → карточки без скачков футера. */}
+        <div className="catalog__results">
+          {status === 'loading' && (
+            <div className="catalog__grid" aria-busy="true">
+              {Array.from({ length: 6 }, (_, i) => (
+                <div className="bouquet-card bouquet-card--skeleton" key={i} />
+              ))}
+            </div>
+          )}
 
-        {status === 'error' && (
-          <div className="state" role="alert">
-            <p className="state__title">Не получилось загрузить букеты</p>
-            <p className="muted">{error.message}</p>
-            <button className="btn" type="button" onClick={retry}>
-              Повторить
-            </button>
-          </div>
-        )}
+          {status === 'error' && (
+            <div className="state" role="alert">
+              <p className="state__title">Не получилось загрузить букеты</p>
+              <p className="muted">{error.message}</p>
+              <button className="btn" type="button" onClick={retry}>
+                Повторить
+              </button>
+            </div>
+          )}
 
-        {status === 'success' && list.length === 0 && (
-          <div className="state">
-            <p className="state__title">Таких букетов пока нет</p>
-            <p className="muted">Попробуйте убрать часть фильтров — или соберите свой букет в конструкторе.</p>
-            <button className="btn" type="button" onClick={reset}>
-              Сбросить фильтры
-            </button>
-          </div>
-        )}
+          {status === 'success' && list.length === 0 && (
+            <div className="state">
+              <p className="state__title">Таких букетов пока нет</p>
+              <p className="muted">Попробуйте убрать часть фильтров — или соберите свой букет в конструкторе.</p>
+              <button className="btn" type="button" onClick={reset}>
+                Сбросить фильтры
+              </button>
+            </div>
+          )}
 
-        {status === 'success' && list.length > 0 && (
-          <div className="catalog__grid" ref={grid}>
-            {list.map((b) => (
-              <BouquetCard bouquet={b} key={b.id} />
-            ))}
-          </div>
-        )}
+          {status === 'success' && list.length > 0 && (
+            <div className="catalog__grid" ref={gridRef}>
+              {list.map((b) => (
+                <BouquetCard bouquet={b} key={b.id} />
+              ))}
+            </div>
+          )}
+        </div>
       </div>
     </main>
   )
