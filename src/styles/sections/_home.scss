@@ -3,7 +3,10 @@
 // ═══════════════════════════════════════════════════════════════════════════
 @use 'abstracts' as *;
 
-$hero-dark: #140b10;
+// Интро — глубокий сливово-розовый (не чёрный): под нежное видео пионов.
+$hero-dark: #2a1220;
+// Текст первого экрана после раскрытия — поверх светлого кадра.
+$hero-ink: #3a1d2c;
 
 // ─── Первый экран: видео сквозь буквы ──────────────────────────────────────
 // Логика и «почему так» — src/modules/heroReveal.ts. Сцена 100svh на всю
@@ -11,7 +14,7 @@ $hero-dark: #140b10;
 .hero {
   position: relative;
   margin-top: calc(-1 * var(--header-height));
-  color: #fff;
+  color: $hero-ink;
   background: $hero-dark;
 
   // Интро включает JS (не «меньше движения»): секция вдвое выше экрана,
@@ -49,9 +52,10 @@ $hero-dark: #140b10;
   inset: 0;
   z-index: -1;
   pointer-events: none;
+  // Кадр светлый (бледные пионы): под текстом — кремовая вуаль, не затемнение.
   background:
-    linear-gradient(90deg, rgb(18 10 14 / 78%) 0%, rgb(18 10 14 / 35%) 45%, transparent 70%),
-    linear-gradient(0deg, rgb(18 10 14 / 70%), transparent 45%);
+    linear-gradient(90deg, rgb(255 248 244 / 88%) 0%, rgb(255 248 244 / 55%) 38%, transparent 65%),
+    linear-gradient(0deg, rgb(255 248 244 / 70%), transparent 40%);
 }
 
 .petals {
@@ -156,7 +160,11 @@ $hero-dark: #140b10;
   padding-block: calc(var(--header-height) + #{space(8)}) fluid(48px, 96px);
 
   .lead {
-    color: rgb(255 255 255 / 82%);
+    color: rgb(58 29 44 / 78%);
+  }
+
+  .eyebrow {
+    color: var(--color-accent);
   }
 }
 
@@ -171,13 +179,13 @@ $hero-dark: #140b10;
 
 // «Стеклянная» вторая кнопка — поверх видео.
 .btn--glass {
-  color: #fff;
-  background: rgb(255 255 255 / 12%);
-  border: 1px solid rgb(255 255 255 / 35%);
+  color: $hero-ink;
+  background: rgb(255 255 255 / 45%);
+  border: 1px solid rgb(255 255 255 / 85%);
   backdrop-filter: blur(10px);
 
   @include hover {
-    background: rgb(255 255 255 / 22%);
+    background: rgb(255 255 255 / 70%);
   }
 }
 
@@ -188,11 +196,11 @@ $hero-dark: #140b10;
   flex-wrap: wrap;
   gap: space(2) space(5);
   font-size: rem(14px);
-  color: rgb(255 255 255 / 75%);
+  color: rgb(58 29 44 / 70%);
 
   li::before {
     margin-right: space(2);
-    color: var(--color-petal);
+    color: var(--color-accent);
     content: '✿';
   }
 }

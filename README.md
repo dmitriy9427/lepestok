@@ -133,4 +133,4 @@ Temidayo Aladesuyi, Sephina Cornwall, Vlad Ioan, Gije Cho, Cup of Honey Lemon, S
 Pawel Konrad, Olya Prutskova, Shawn Nguyen, Cz Jen. Ссылки на букеты — поле `credit` в
 `src/data/bouquets.ts`.
 
-Видео первого экрана — Naveen G / [Pexels](https://www.pexels.com/video/4286573/).
+Видео первого экрана — Mikhail Nilov / [Pexels](https://www.pexels.com/video/8246501/).

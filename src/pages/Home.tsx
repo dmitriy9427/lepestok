@@ -97,7 +97,7 @@ export function Home() {
     <main id="main" ref={main}>
       <section className="hero" ref={hero}>
         <div className="hero__stage">
-          {/* Видео Pexels (Naveen G). muted + playsInline — иначе нет автозапуска
+          {/* Видео Pexels (Mikhail Nilov). muted + playsInline — иначе нет автозапуска
               (iOS открыл бы на весь экран); играет только пока hero на экране. */}
           <video
             className="hero__video"
@@ -119,7 +119,7 @@ export function Home() {
             Листайте
           </p>
           <div className="container hero__content">
-            <p className="eyebrow eyebrow--light">Цветочная мастерская · Москва</p>
+            <p className="eyebrow">Цветочная мастерская · Москва</p>
             <h1 className="hero__title">
               Букеты, которые собирают для&nbsp;вас&nbsp;— и&nbsp;вместе с&nbsp;вами
             </h1>
@@ -128,7 +128,7 @@ export function Home() {
               отправки.
             </p>
             <div className="cluster">
-              <Link className="btn btn--lg btn--light" to="/catalog">
+              <Link className="btn btn--lg" to="/catalog">
                 Выбрать букет
               </Link>
               <Link className="btn btn--lg btn--glass" to="/builder">

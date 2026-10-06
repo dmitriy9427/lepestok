@@ -56,9 +56,22 @@ export default function heroReveal(section: HTMLElement, ctx: { reduced?: boolea
       onToggle: (self) => header.classList.toggle('is-over-hero', self.isActive),
     })
     header.classList.toggle('is-over-hero', over.isActive)
+    // Интро тёмное (шапка светлая), раскрытый кадр светлый (шапка тёмная):
+    // переключаем на середине раскрытия. Без интро — сразу светлый кадр.
+    const light = (on: boolean) => header.classList.toggle('is-hero-light', on)
+    light(Boolean(ctx.reduced))
+    const phase = ctx.reduced
+      ? null
+      : ScrollTrigger.create({
+          trigger: section,
+          start: 'top top',
+          end: 'bottom bottom',
+          onUpdate: (self) => light(self.progress > 0.45),
+        })
     d.add(() => {
       over.kill()
-      header.classList.remove('is-over-hero')
+      phase?.kill()
+      header.classList.remove('is-over-hero', 'is-hero-light')
     })
   }
 
@@ -75,10 +88,10 @@ export default function heroReveal(section: HTMLElement, ctx: { reduced?: boolea
     defaults: { ease: 'none' },
     scrollTrigger: { trigger: section, start: 'top top', end: 'bottom bottom', scrub: 0.6 },
   })
-  // Яркая часть кадра — справа: в интро видео увеличено к ней, чтобы цвет
-  // попал во все буквы; к концу — обычный кадр.
+  // В интро видео приближено к центру букета — в буквы попадают лепестки,
+  // а не светлый фон; к концу — обычный кадр.
   tl.to(hint, { autoAlpha: 0, duration: 0.1 }, 0)
-    .fromTo(video, { scale: 1.7, transformOrigin: '78% 50%' }, { scale: 1, ease: 'power1.inOut', duration: 0.85 }, 0)
+    .fromTo(video, { scale: 1.45, transformOrigin: '45% 45%' }, { scale: 1, ease: 'power1.inOut', duration: 0.85 }, 0)
     .fromTo(shade, { autoAlpha: 0 }, { autoAlpha: 1, duration: 0.3 }, 0.5)
     .fromTo(word, { scale: 1 }, { scale: 9, ease: 'power2.in', duration: 0.7 }, 0)
     .to(mask, { autoAlpha: 0, ease: 'power1.in', duration: 0.45 }, 0.3)

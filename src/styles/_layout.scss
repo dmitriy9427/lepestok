@@ -431,6 +431,16 @@ main > .section:first-child {
       color: #fff;
       background: rgb(255 255 255 / 14%);
     }
+
+    // Раскрытый светлый кадр (бледные пионы) — шапка тёмная.
+    &.is-hero-light {
+      color: #3a1d2c;
+
+      .burger:not([aria-expanded='true']) {
+        color: #3a1d2c;
+        background: rgb(255 255 255 / 55%);
+      }
+    }
   }
 }
 
