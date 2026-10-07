@@ -668,8 +668,11 @@ $menu-dark: #1d1418;
     }
   }
 
-  // Логотип и иконки — поверх открытого меню, светлые.
-  .is-menu-open .header {
+  // Логотип и иконки — поверх открытого меню, светлые. Второй селектор —
+  // чтобы перебить тёмную шапку над светлым кадром hero
+  // (.header.is-over-hero.is-hero-light специфичнее, чем .is-menu-open .header).
+  .is-menu-open .header,
+  .is-menu-open .header.is-over-hero.is-hero-light {
     color: #fff;
 
     &::before {
